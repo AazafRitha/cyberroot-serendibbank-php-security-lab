@@ -1,6 +1,8 @@
 # Exercise validation
 
-Each exercise runs in its own Docker Compose project and binds to `127.0.0.1` only. Start one from its scenario folder with `docker compose up --build -d`, follow the linked check, then run `docker compose down`. These are intentionally vulnerable teaching examples and must not be added to the public VM's core application. Use only fictional data and systems you control.
+The [main site](main-site.md) now has five integrated intentional weaknesses when `APP_LAB_MODE=1`. Start at <http://localhost:8080> and use the real customer and staff flows to validate them. Use only fictional data and systems you control.
+
+The original focused exercises below also run as independent Compose projects, each bound to `127.0.0.1`. Start one from its scenario folder with `docker compose up --build -d`, follow its linked check, then run `docker compose down`.
 
 | Exercise | Banking area | Local URL | Check |
 | --- | --- | --- | --- |
@@ -10,4 +12,4 @@ Each exercise runs in its own Docker Compose project and binds to `127.0.0.1` on
 | CSRF | Pay a saved payee | `http://localhost:8084` | [steps](csrf-transfer.md) |
 | Weak login | Online banking | `http://localhost:8085` | [steps](weak-login.md) |
 
-The core portal has [functional checks](core-portal.md) for authentication, ownership, form validation, role separation, and responsive layout. The intended flaws are confined to `scenarios/`. Verify them locally before any separately reviewed challenge deployment. The original idea of a specific PHP advisory was never identified by CVE, so no such advisory is claimed here.
+The portal has [functional checks](core-portal.md) for forms, role separation, and layout; in lab mode, the [main-site guide](main-site.md) records where normal security checks are deliberately missing. The original idea of a specific PHP advisory was never identified by CVE, so no such advisory is claimed here.

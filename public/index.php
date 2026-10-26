@@ -10,15 +10,18 @@ use CyberRoot\SerendibBank\Controllers\TransferController;
 use CyberRoot\SerendibBank\Controllers\ApplicationController;
 use CyberRoot\SerendibBank\Controllers\SupportController;
 use CyberRoot\SerendibBank\Controllers\StaffController;
+use CyberRoot\SerendibBank\Controllers\ChatController;
+use CyberRoot\SerendibBank\Controllers\LabSurfaceController;
 use CyberRoot\SerendibBank\Core\Router;
 use CyberRoot\SerendibBank\Core\View;
 use CyberRoot\SerendibBank\Core\Auth;
+use CyberRoot\SerendibBank\Core\Lab;
 
 require dirname(__DIR__) . '/app/bootstrap.php';
 
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: strict-origin-when-cross-origin');
-header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'");
+header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self'; script-src " . (Lab::enabled() ? "'self' 'unsafe-inline'" : "'self'") . "; form-action 'self'; frame-ancestors 'none'; base-uri 'none'");
 
 $router = new Router();
 $router->get('/', [new HomeController(), 'index']);
@@ -49,6 +52,15 @@ $staff = new StaffController();
 $router->get('/staff', [$staff, 'index']);
 $router->post('/staff/applications/review', [$staff, 'reviewApplication']);
 $router->post('/staff/support/resolve', [$staff, 'resolveSupport']);
+$chat = new ChatController();
+$router->get('/chat', [$chat, 'history']);
+$router->post('/chat', [$chat, 'reply']);
+$router->get('/chat/transcript', [$chat, 'transcript']);
+$router->post('/chat/escalate', [$chat, 'escalate']);
+$labSurfaces = new LabSurfaceController();
+$router->get('/statement', [$labSurfaces, 'statement']);
+$router->get('/locations/search', [$labSurfaces, 'branchSearch']);
+$router->get('/transfer/repeat', [$labSurfaces, 'repeatTransfer']);
 
 try {
     Auth::start();

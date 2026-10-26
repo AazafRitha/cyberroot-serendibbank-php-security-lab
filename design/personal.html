@@ -8,8 +8,10 @@
     <title>Personal | SerendibBank</title>
     <link rel="stylesheet" href="../public/assets/style.css">
     <link rel="stylesheet" href="../public/assets/portal.css">
+    <link rel="stylesheet" href="../public/assets/chat.css">
     <link rel="icon" type="image/svg+xml" href="../public/assets/logo-mark.svg">
     <script src="../public/assets/site.js" defer></script>
+    <script src="../public/assets/chat.js" defer></script>
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -36,7 +38,7 @@
         </div>
     </header>
 
-    <main id="main"><section class="page-hero page-hero-personal"><div class="container page-hero-inner"><div><span class="eyebrow eyebrow-light">Personal banking</span><h1>For the life<br><em>you're building.</em></h1><p>Everyday accounts and savings designed to help you make the most of today and plan for tomorrow.</p><a class="button button-gold" href="#accounts">Explore accounts <span aria-hidden="true">↓</span></a></div><div class="page-hero-emblem" aria-hidden="true">✦</div></div></section>
+    <main id="main"><section class="page-hero page-hero-personal"><div class="container page-hero-inner"><div><span class="eyebrow eyebrow-light">Personal banking</span><h1>For the life<br><em>you're building.</em></h1><p>Everyday accounts and savings designed to help you make the most of today and plan for tomorrow.</p><a class="button button-gold" href="#accounts">Explore accounts <span aria-hidden="true">↓</span></a></div><div class="page-hero-photo"><img src="../public/assets/personal-savings.png" alt="Customer planning savings at home in Colombo" loading="lazy"></div></div></section>
 <nav class="section-nav" aria-label="On this page"><div class="container"><a href="#accounts">Accounts</a><a href="#savings">Savings</a><a href="#more">More ways to bank</a></div></nav>
 <section class="section container" id="accounts"><div class="section-header"><div><span class="eyebrow">Day-to-day banking</span><h2 class="display-heading">Find your <em>everyday fit.</em></h2></div><p>Simple ways to manage money, make payments and stay on top of what matters.</p></div><div class="detail-grid"><article class="detail-card"><span class="detail-number">01</span><h3>Everyday account</h3><p>A practical home for your daily banking, with easy access to your money and clear account activity.</p><ul><li>View balances and transactions</li><li>Access digital banking</li><li>Use a linked debit card</li></ul><a class="card-more" href="digital.html">Explore digital banking <span aria-hidden="true">→</span></a></article><article class="detail-card detail-card-highlight"><span class="detail-number">02</span><h3>Everyday Plus</h3><p>A little more room for the way you live, with convenient banking across channels.</p><ul><li>Manage regular payments</li><li>Track spending in one place</li><li>Find support in branch</li></ul><a class="card-more" href="locations.html">Find a branch <span aria-hidden="true">→</span></a></article></div></section>
 <section class="section soft-section" id="savings"><div class="container split-feature"><div class="savings-art" aria-hidden="true"><span class="savings-sun"></span><span class="savings-arch"></span><span class="savings-leaf">✳</span></div><div><span class="eyebrow">Save with purpose</span><h2 class="display-heading">Give your plans<br><em>room to grow.</em></h2><p>Whether you're setting money aside for a big milestone or building a regular habit, our savings options help keep your goals in focus.</p><div class="feature-list"><div><span>01</span><div><strong>Regular savings</strong><small>Put something aside, one step at a time.</small></div></div><div><span>02</span><div><strong>Fixed deposits</strong><small>Plan around a term that works for you.</small></div></div><div><span>03</span><div><strong>Children's savings</strong><small>Start a foundation for their future.</small></div></div></div><a class="text-link" href="locations.html">Talk to us about savings <span aria-hidden="true">↗</span></a></div></div></section>
@@ -53,5 +55,15 @@
         </div>
         <div class="container footer-bottom"><span>&copy; 2026 SerendibBank. All rights reserved.</span><span>Banking for what matters next.</span></div>
     </footer>
+    <aside class="chat-widget" aria-label="Digital assistant">
+        <section class="chat-panel" id="chat-panel" aria-label="Chat with SerendibBank" hidden>
+            <div class="chat-panel-header"><div class="chat-avatar" aria-hidden="true">✦</div><div><strong>SerendibBank assistant</strong><small>Here to help you find your way</small></div><button type="button" class="chat-close" data-chat-close aria-label="Close chat">×</button></div>
+            <div class="chat-messages" data-chat-messages role="log" aria-live="polite" aria-relevant="additions"><div class="chat-message chat-message-assistant">Hello. Ask me about accounts, cards, transfers, branches or support.</div></div>
+            <div class="chat-suggestions" data-chat-suggestions><button type="button" data-chat-suggestion="How do I apply for a card?">Apply for a card</button><button type="button" data-chat-suggestion="Where is a branch?">Find a branch</button><button type="button" data-chat-suggestion="How do I transfer money?">Transfer money</button></div>
+            <form class="chat-form" data-chat-form><label class="sr-only" for="chat-message">Your message</label><input id="chat-message" name="message" maxlength="500" autocomplete="off" placeholder="Ask a question" required><button type="submit" aria-label="Send message">→</button></form>
+            <p class="chat-footnote">Never share passwords, PINs or one-time codes here. <a href="support.html">View conversation</a></p>
+        </section>
+        <button class="chat-launcher" type="button" data-chat-toggle aria-controls="chat-panel" aria-expanded="false"><span aria-hidden="true">✦</span><strong>Chat with us</strong></button>
+    </aside>
 </body>
 </html>

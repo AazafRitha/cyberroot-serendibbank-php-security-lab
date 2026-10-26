@@ -8,8 +8,10 @@
     <title>Support | SerendibBank</title>
     <link rel="stylesheet" href="../public/assets/style.css">
     <link rel="stylesheet" href="../public/assets/portal.css">
+    <link rel="stylesheet" href="../public/assets/chat.css">
     <link rel="icon" type="image/svg+xml" href="../public/assets/logo-mark.svg">
     <script src="../public/assets/site.js" defer></script>
+    <script src="../public/assets/chat.js" defer></script>
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -36,7 +38,7 @@
         </div>
     </header>
 
-    <main id="main"><section class="page-hero page-hero-support"><div class="container page-hero-inner"><div><span class="eyebrow eyebrow-light">Help &amp; support</span><h1>We're here <em>to help.</em></h1><p>Find answers to everyday banking questions and the right next step when you need a hand.</p></div><div class="support-hero-art" aria-hidden="true"><span>?</span><i>✦</i></div></div></section>
+    <main id="main"><section class="page-hero page-hero-support"><div class="container page-hero-inner"><div><span class="eyebrow eyebrow-light">Help &amp; support</span><h1>We're here <em>to help.</em></h1><p>Find answers to everyday banking questions and the right next step when you need a hand.</p><button class="button button-gold" type="button" data-chat-open>Ask our assistant <span aria-hidden="true">↗</span></button></div><div class="page-hero-photo"><img src="../public/assets/customer-support.png" alt="SerendibBank advisor speaking with a customer" loading="lazy"></div></div></section>
 <section class="section container"><div class="section-header"><div><span class="eyebrow">Start here</span><h2 class="display-heading">What do you <em>need help with?</em></h2></div></div><div class="three-link-grid"><a href="#accounts-help"><span aria-hidden="true">◫</span><h3>Accounts</h3><p>Balances, transactions and access to your account.</p><b aria-hidden="true">↘</b></a><a href="#cards-help"><span aria-hidden="true">▣</span><h3>Cards</h3><p>Card use, keeping details safe and reporting concerns.</p><b aria-hidden="true">↘</b></a><a href="locations.html"><span aria-hidden="true">⌖</span><h3>Visit us</h3><p>Find a branch or ATM that works for you.</p><b aria-hidden="true">↗</b></a></div></section>
 <section class="section soft-section"><div class="container faq-layout"><div><span class="eyebrow">Frequently asked questions</span><h2 class="display-heading">Answers for <em>everyday life.</em></h2><p>Explore common questions about your accounts, cards and online banking.</p></div><div class="faq-list"><h3 id="accounts-help">Accounts &amp; online banking</h3><details><summary>Where can I check my account balance?</summary><p>Use online banking to see your available balance and recent account activity.</p></details><details><summary>How do I review recent transactions?</summary><p>Open your account overview in online banking to review recent deposits and payments.</p></details><details><summary>What should I do if I do not recognise a transaction?</summary><p>Contact the bank through your usual verified channel or visit a branch as soon as possible. Do not share your password, PIN or one-time code.</p></details><h3 id="cards-help">Cards &amp; security</h3><details><summary>How do I keep my card information safe?</summary><p>Keep your PIN private, check your card activity regularly and avoid sharing card details through unverified messages or websites.</p></details><details><summary>What if my card is lost or stolen?</summary><p>Contact the bank through a verified service channel immediately to request assistance with your card.</p></details><details><summary>Will the bank ask me for a one-time code?</summary><p>Never share one-time codes, passwords or PINs with anyone who contacts you unexpectedly.</p></details></div></div></section>
 <section class="section container"><div class="section-header"><div><span class="eyebrow">Still need a hand?</span><h2 class="display-heading">Find the right <em>next step.</em></h2></div></div><div class="detail-grid"><a class="contact-card" href="locations.html"><span class="help-symbol" aria-hidden="true">⌖</span><h3>Visit a branch</h3><p>Speak with our team about your account, card or banking needs.</p><span class="card-more">Find a location <span aria-hidden="true">↗</span></span></a><a class="contact-card" href="support.html"><span class="help-symbol" aria-hidden="true">◫</span><h3>Send a message</h3><p>Tell our team what you need and follow the request in your dashboard.</p><span class="card-more">Contact support <span aria-hidden="true">↗</span></span></a></div></section>
@@ -51,5 +53,15 @@
         </div>
         <div class="container footer-bottom"><span>&copy; 2026 SerendibBank. All rights reserved.</span><span>Banking for what matters next.</span></div>
     </footer>
+    <aside class="chat-widget" aria-label="Digital assistant">
+        <section class="chat-panel" id="chat-panel" aria-label="Chat with SerendibBank" hidden>
+            <div class="chat-panel-header"><div class="chat-avatar" aria-hidden="true">✦</div><div><strong>SerendibBank assistant</strong><small>Here to help you find your way</small></div><button type="button" class="chat-close" data-chat-close aria-label="Close chat">×</button></div>
+            <div class="chat-messages" data-chat-messages role="log" aria-live="polite" aria-relevant="additions"><div class="chat-message chat-message-assistant">Hello. Ask me about accounts, cards, transfers, branches or support.</div></div>
+            <div class="chat-suggestions" data-chat-suggestions><button type="button" data-chat-suggestion="How do I apply for a card?">Apply for a card</button><button type="button" data-chat-suggestion="Where is a branch?">Find a branch</button><button type="button" data-chat-suggestion="How do I transfer money?">Transfer money</button></div>
+            <form class="chat-form" data-chat-form><label class="sr-only" for="chat-message">Your message</label><input id="chat-message" name="message" maxlength="500" autocomplete="off" placeholder="Ask a question" required><button type="submit" aria-label="Send message">→</button></form>
+            <p class="chat-footnote">Never share passwords, PINs or one-time codes here. <a href="support.html">View conversation</a></p>
+        </section>
+        <button class="chat-launcher" type="button" data-chat-toggle aria-controls="chat-panel" aria-expanded="false"><span aria-hidden="true">✦</span><strong>Chat with us</strong></button>
+    </aside>
 </body>
 </html>

@@ -7,6 +7,7 @@ namespace CyberRoot\SerendibBank\Controllers;
 use CyberRoot\SerendibBank\Core\Auth;
 use CyberRoot\SerendibBank\Core\Database;
 use CyberRoot\SerendibBank\Core\View;
+use CyberRoot\SerendibBank\Core\Lab;
 use CyberRoot\SerendibBank\Models\User;
 
 final class AuthController
@@ -42,7 +43,7 @@ final class AuthController
 
         $users = new User(Database::connect());
         $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
-        if ($users->isRateLimited($email, $ip)) {
+        if (!Lab::enabled() && $users->isRateLimited($email, $ip)) {
             http_response_code(429);
             View::render('login', ['title' => 'Sign in | SerendibBank', 'error' => 'Please wait a few minutes before trying again.', 'email' => $email]);
             return;
@@ -54,8 +55,13 @@ final class AuthController
             if ($user === false) {
                 password_verify($password, password_hash('placeholder-password', PASSWORD_BCRYPT));
             }
-            $users->recordFailedLogin($email, $ip);
-            $this->loginFailed($email);
+            if (!Lab::enabled()) {
+                $users->recordFailedLogin($email, $ip);
+            }
+            $detail = Lab::enabled()
+                ? ($user === false ? 'No account was found for that email address.' : 'The password is incorrect.')
+                : null;
+            $this->loginFailed($email, $detail);
             return;
         }
 
@@ -82,12 +88,12 @@ final class AuthController
         header('Location: /login', true, 303);
     }
 
-    private function loginFailed(string $email = ''): void
+    private function loginFailed(string $email = '', ?string $detail = null): void
     {
         http_response_code(401);
         View::render('login', [
             'title' => 'Sign in | SerendibBank',
-            'error' => 'We could not sign you in with those details.',
+            'error' => $detail ?? 'We could not sign you in with those details.',
             'email' => $email,
         ]);
     }

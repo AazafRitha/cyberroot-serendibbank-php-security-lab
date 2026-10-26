@@ -25,6 +25,7 @@ final class View
 
         $data['currentUser'] = Auth::user();
         $data['csrfToken'] = Auth::csrfToken();
+        $data['labMode'] = Lab::enabled();
 
         ob_start();
         require $viewPath;

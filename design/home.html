@@ -8,8 +8,10 @@
     <title>SerendibBank | Personal Banking</title>
     <link rel="stylesheet" href="../public/assets/style.css">
     <link rel="stylesheet" href="../public/assets/portal.css">
+    <link rel="stylesheet" href="../public/assets/chat.css">
     <link rel="icon" type="image/svg+xml" href="../public/assets/logo-mark.svg">
     <script src="../public/assets/site.js" defer></script>
+    <script src="../public/assets/chat.js" defer></script>
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -79,7 +81,7 @@
 
 <section class="section digital-feature"><div class="container digital-feature-inner"><div class="digital-feature-copy"><span class="eyebrow eyebrow-light">SerendibBank digital</span><h2 class="display-heading">Your bank.<br><em>Wherever life happens.</em></h2><p>Check your accounts, follow activity and stay in control with a banking experience that moves with you.</p><a class="button button-light" href="digital.html">Explore digital banking <span aria-hidden="true">↗</span></a></div><div class="digital-feature-art" aria-hidden="true"><div class="feature-orbit"></div><div class="feature-phone"><div class="feature-phone-top"></div><span>SerendibBank</span><small>YOUR ACCOUNTS</small><strong>LKR 248,650.00</strong><i></i><i></i><i></i></div><div class="floating-message">✦ &nbsp; Banking, in your hands</div></div></div></section>
 
-<section class="section help-home container"><div><span class="eyebrow">Here when you need us</span><h2 class="display-heading">How can we <em>help?</em></h2><p>Answers, guidance and a friendly face are always within reach.</p></div><div class="help-links"><a href="locations.html"><span class="help-symbol" aria-hidden="true">⌖</span><span><strong>Find a branch or ATM</strong><small>Find the nearest place to bank with us.</small></span><span aria-hidden="true">↗</span></a><a href="support.html"><span class="help-symbol" aria-hidden="true">?</span><span><strong>Help and support</strong><small>Get answers to everyday banking questions.</small></span><span aria-hidden="true">↗</span></a></div></section>
+<section class="section help-home container"><div><span class="eyebrow">Here when you need us</span><h2 class="display-heading">How can we <em>help?</em></h2><p>Answers, guidance and a friendly face are always within reach.</p><button type="button" class="button help-chat-button" data-chat-open>Ask our assistant <span aria-hidden="true">↗</span></button></div><div class="help-links"><a href="locations.html"><span class="help-symbol" aria-hidden="true">⌖</span><span><strong>Find a branch or ATM</strong><small>Find the nearest place to bank with us.</small></span><span aria-hidden="true">↗</span></a><a href="support.html"><span class="help-symbol" aria-hidden="true">?</span><span><strong>Help and support</strong><small>Get answers to everyday banking questions.</small></span><span aria-hidden="true">↗</span></a></div></section>
 </main>
 
     <footer class="site-footer">
@@ -91,5 +93,15 @@
         </div>
         <div class="container footer-bottom"><span>&copy; 2026 SerendibBank. All rights reserved.</span><span>Banking for what matters next.</span></div>
     </footer>
+    <aside class="chat-widget" aria-label="Digital assistant">
+        <section class="chat-panel" id="chat-panel" aria-label="Chat with SerendibBank" hidden>
+            <div class="chat-panel-header"><div class="chat-avatar" aria-hidden="true">✦</div><div><strong>SerendibBank assistant</strong><small>Here to help you find your way</small></div><button type="button" class="chat-close" data-chat-close aria-label="Close chat">×</button></div>
+            <div class="chat-messages" data-chat-messages role="log" aria-live="polite" aria-relevant="additions"><div class="chat-message chat-message-assistant">Hello. Ask me about accounts, cards, transfers, branches or support.</div></div>
+            <div class="chat-suggestions" data-chat-suggestions><button type="button" data-chat-suggestion="How do I apply for a card?">Apply for a card</button><button type="button" data-chat-suggestion="Where is a branch?">Find a branch</button><button type="button" data-chat-suggestion="How do I transfer money?">Transfer money</button></div>
+            <form class="chat-form" data-chat-form><label class="sr-only" for="chat-message">Your message</label><input id="chat-message" name="message" maxlength="500" autocomplete="off" placeholder="Ask a question" required><button type="submit" aria-label="Send message">→</button></form>
+            <p class="chat-footnote">Never share passwords, PINs or one-time codes here. <a href="support.html">View conversation</a></p>
+        </section>
+        <button class="chat-launcher" type="button" data-chat-toggle aria-controls="chat-panel" aria-expanded="false"><span aria-hidden="true">✦</span><strong>Chat with us</strong></button>
+    </aside>
 </body>
 </html>

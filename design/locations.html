@@ -8,8 +8,10 @@
     <title>Locations | SerendibBank</title>
     <link rel="stylesheet" href="../public/assets/style.css">
     <link rel="stylesheet" href="../public/assets/portal.css">
+    <link rel="stylesheet" href="../public/assets/chat.css">
     <link rel="icon" type="image/svg+xml" href="../public/assets/logo-mark.svg">
     <script src="../public/assets/site.js" defer></script>
+    <script src="../public/assets/chat.js" defer></script>
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -44,7 +46,7 @@
     <article class="location-card" data-category="branch" data-search="jaffna town northern province"><span class="location-type">Branch</span><h3>Jaffna Town</h3><p>Jaffna, Northern Province</p><div class="location-meta"><span>Banking services</span><span>Weekdays</span></div></article>
     <article class="location-card" data-category="atm" data-search="colombo fort western province"><span class="location-type">ATM</span><h3>Colombo Fort ATM</h3><p>Colombo, Western Province</p><div class="location-meta"><span>Cash access</span><span>Self service</span></div></article>
     <article class="location-card" data-category="atm" data-search="negombo western province"><span class="location-type">ATM</span><h3>Negombo ATM</h3><p>Negombo, Western Province</p><div class="location-meta"><span>Cash access</span><span>Self service</span></div></article>
-</div><p class="empty-filter" data-filter-empty="locations" hidden>No locations match your search.</p></section>
+</div><p class="empty-filter" data-filter-empty="locations" hidden>No locations match your search.</p><form class="branch-search-form" method="get" action="/locations/search"><label for="branch-search-q">Looking for a particular city?</label><div><input id="branch-search-q" name="q" placeholder="Enter a city" maxlength="80" required><button class="button" type="submit">Search branches</button></div></form></section>
 <section class="container bottom-cta"><div><span class="eyebrow eyebrow-light">Before you visit</span><h2>Need help choosing where to go?</h2><p>Our help centre covers everyday banking questions.</p></div><a class="button button-gold" href="support.html">Visit help centre <span aria-hidden="true">↗</span></a></section>
 </main>
 
@@ -57,5 +59,15 @@
         </div>
         <div class="container footer-bottom"><span>&copy; 2026 SerendibBank. All rights reserved.</span><span>Banking for what matters next.</span></div>
     </footer>
+    <aside class="chat-widget" aria-label="Digital assistant">
+        <section class="chat-panel" id="chat-panel" aria-label="Chat with SerendibBank" hidden>
+            <div class="chat-panel-header"><div class="chat-avatar" aria-hidden="true">✦</div><div><strong>SerendibBank assistant</strong><small>Here to help you find your way</small></div><button type="button" class="chat-close" data-chat-close aria-label="Close chat">×</button></div>
+            <div class="chat-messages" data-chat-messages role="log" aria-live="polite" aria-relevant="additions"><div class="chat-message chat-message-assistant">Hello. Ask me about accounts, cards, transfers, branches or support.</div></div>
+            <div class="chat-suggestions" data-chat-suggestions><button type="button" data-chat-suggestion="How do I apply for a card?">Apply for a card</button><button type="button" data-chat-suggestion="Where is a branch?">Find a branch</button><button type="button" data-chat-suggestion="How do I transfer money?">Transfer money</button></div>
+            <form class="chat-form" data-chat-form><label class="sr-only" for="chat-message">Your message</label><input id="chat-message" name="message" maxlength="500" autocomplete="off" placeholder="Ask a question" required><button type="submit" aria-label="Send message">→</button></form>
+            <p class="chat-footnote">Never share passwords, PINs or one-time codes here. <a href="support.html">View conversation</a></p>
+        </section>
+        <button class="chat-launcher" type="button" data-chat-toggle aria-controls="chat-panel" aria-expanded="false"><span aria-hidden="true">✦</span><strong>Chat with us</strong></button>
+    </aside>
 </body>
 </html>

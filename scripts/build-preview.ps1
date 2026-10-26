@@ -22,6 +22,7 @@ foreach ($page in $pages) {
     $html = $html.Replace('href="/apply/card"', 'href="cards.html"')
     $html = $html.Replace('href="/support/request"', 'href="support.html"')
     $html = $html.Replace('href="/transfer"', 'href="accounts.html"')
+    $html = $html.Replace('href="/chat/transcript"', 'href="support.html"')
     $html = $html.Replace('href="/"', 'href="home.html"')
 
     Set-Content -LiteralPath (Join-Path $project "design\$page.html") -Value ($html.TrimEnd() + "`n") -Encoding utf8 -NoNewline
@@ -44,6 +45,7 @@ foreach ($name in @('personal', 'cards', 'offers', 'digital', 'locations', 'supp
 }
 $accounts = $accounts.Replace('href="/dashboard"', 'href="accounts.html"').Replace('href="/"', 'href="home.html"')
 $accounts = $accounts.Replace('href="/login"', 'href="login.html"')
+$accounts = $accounts.Replace('href="/chat/transcript"', 'href="support.html"')
 Set-Content -LiteralPath (Join-Path $project 'design\accounts.html') -Value ($accounts.TrimEnd() + "`n") -Encoding utf8 -NoNewline
 
 $loginContent = @'
@@ -55,6 +57,7 @@ $login = $login.Replace('<?= date(''Y'') ?>', (Get-Date).Year.ToString())
 $login = $login.Replace('href="/assets/', 'href="../public/assets/').Replace('src="/assets/', 'src="../public/assets/')
 foreach ($name in @('personal', 'cards', 'offers', 'digital', 'locations', 'support')) { $login = $login.Replace("href=`"/$name`"", "href=`"$name.html`"") }
 $login = $login.Replace('href="/login"', 'href="login.html"').Replace('href="/"', 'href="home.html"')
+$login = $login.Replace('href="/chat/transcript"', 'href="support.html"')
 Set-Content -LiteralPath (Join-Path $project 'design\login.html') -Value ($login.TrimEnd() + "`n") -Encoding utf8 -NoNewline
 
 Write-Output 'Updated static previews in design/.'

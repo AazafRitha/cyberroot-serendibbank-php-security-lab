@@ -10,6 +10,7 @@ services:
       DB_USER: ${DB_USER:?Set DB_USER in .env}
       DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
       APP_HTTPS: ${APP_HTTPS:-0}
+      APP_LAB_MODE: ${APP_LAB_MODE:-1}
     volumes:
       - ./:/var/www/html
     depends_on:

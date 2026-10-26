@@ -411,3 +411,71 @@ tr:last-child td{border-bottom:0}
 .offer-search-page .offer-grid{margin-bottom:60px}
 @media(max-width:750px){.offer-search-entry{display:block;padding:30px 0 60px}.offer-search-entry .branch-search-form{margin-top:24px}}
 @media(max-width:650px){.page-hero-inner>div.page-hero-photo{display:block;height:225px;margin:-24px 0 28px}.page-hero-inner>.page-hero-photo img{object-position:center}.branch-search-form>div{display:block}.branch-search-form button{margin-top:10px;width:100%}}
+
+/* Card collection and editorial offer imagery */
+.page-hero-cards{background:radial-gradient(circle at 75% 35%,#8a4456 0,#4a1c2e 46%,#32121e 100%)}
+.bank-card-art{background:#571e30 url('/assets/card-debit.webp') center/cover no-repeat;border:1px solid #f4d89973;box-shadow:0 24px 45px #1c0b1866}
+.cards-hero-stack .bank-card-art{width:290px;height:181px}
+.cards-hero-stack .card-back{background:#d8b979 url('/assets/card-credit.webp') center/cover no-repeat;color:#3b1725;box-shadow:0 23px 40px #180b1566}
+.cards-hero-stack .card-front{box-shadow:0 25px 50px #180b1580}
+.cards-hero-stack .card-back .mini-chip{background:linear-gradient(135deg,#d5c49c,#a18b60)}
+.cards-hero-stack .card-front .mini-brand,.product-tile-cards .mini-brand{text-shadow:0 2px 8px #190510bb}
+.card-range{gap:26px}
+.card-range .detail-card{padding:0 34px 38px;border:1px solid #e8d7d1;box-shadow:0 18px 34px #4a1d2e0a;overflow:hidden}
+.card-range .detail-card:hover{box-shadow:0 22px 48px #4a1d2e1a}
+.card-visual{min-height:268px;display:grid;place-items:center;margin:0 -34px 28px;background:radial-gradient(circle at 50% 15%,#fcf5e9,#eeded7);border-bottom:1px solid #ecdcd5}
+.card-visual-credit{background:radial-gradient(circle at 50% 15%,#fffaf0,#eee2c5)}
+.small-bank-card{width:min(340px,calc(100% - 48px));height:auto;aspect-ratio:1.6;position:relative;border-radius:17px;margin:0;padding:22px 24px;box-shadow:0 23px 32px #3c182c3d;transform:rotate(-4deg);transition:transform .25s ease,box-shadow .25s ease}
+.card-visual-credit .small-bank-card{transform:rotate(4deg)}
+.card-range .detail-card:hover .small-bank-card{transform:rotate(0deg) translateY(-5px);box-shadow:0 30px 42px #3c182c40}
+.debit-card{background:#571e30 url('/assets/card-debit.webp') center/cover no-repeat;color:#fff}
+.credit-card{background:#d8b979 url('/assets/card-credit.webp') center/cover no-repeat;color:#3b1725}
+.small-bank-card span{font-size:1.05rem;font-weight:700;letter-spacing:-.03em;text-shadow:0 2px 8px #1b08124d}
+.small-bank-card .mini-chip{position:absolute;left:24px;top:42%;margin:0;width:39px;height:29px;border:1px solid #fff7;box-shadow:inset 0 0 0 1px #66512f33}
+.small-bank-card b{position:absolute;left:24px;bottom:20px;margin:0;font-size:.72rem;letter-spacing:.15em}
+.card-range .detail-card h3{margin-top:10px}
+.card-range .detail-card ul{min-height:102px}
+.application-card-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:4px 0 24px}
+.application-card-options figure{margin:0;padding:15px;border:1px solid #ead9d5;background:#faf5ef;text-align:center}
+.application-card-options img{width:min(100%,240px);height:auto;aspect-ratio:1.6;object-fit:cover;border-radius:12px;display:block;margin:auto;box-shadow:0 9px 18px #2e11213b}
+.application-card-options figcaption{margin-top:11px;color:#5a2a3b;font-size:.75rem;font-weight:800}
+.offer-art{background-size:cover;background-position:center;isolation:isolate}
+.offer-art:after{content:'';position:absolute;inset:35% 0 0;background:linear-gradient(transparent,#24121bb8);z-index:0}
+.offer-art>span{display:none}
+.offer-art small{z-index:1;text-shadow:0 1px 5px #0008}
+.offer-art-travel{background-image:url('/assets/offer-travel.webp')}
+.offer-art-shopping{background-image:url('/assets/offer-shopping.webp')}
+.offer-art-wellness{background-image:url('/assets/offer-wellness.webp')}
+.offer-art-coffee{background-image:url('/assets/offer-coffee.webp')}
+.offer-art-weekend{background-image:url('/assets/offer-weekend.webp')}
+.page-hero-offers{background:linear-gradient(120deg,#3b1725,#895552)}
+.offers-hero-symbol{position:relative;width:min(440px,90%);height:305px;background:linear-gradient(0deg,#28121d57,transparent 60%),url('/assets/offer-weekend.webp') center/cover no-repeat;border:1px solid #f7ddad7a;box-shadow:0 26px 48px #210e1c66;transform:rotate(2deg);font-size:0}
+.offers-hero-symbol:after{content:'';position:absolute;inset:12px;border:1px solid #fff9}
+
+/* Product information centre */
+.document-hero{background:linear-gradient(120deg,#32121f,#743549)}
+.document-hero-art{justify-self:center;width:min(350px,90%);height:315px;background:#fffaf0;color:#3b1725;padding:38px;transform:rotate(5deg);box-shadow:22px 24px 0 #deb97655,0 25px 50px #1c071966;border-top:6px solid #d5aa62}
+.document-hero-art span{font-family:Georgia,serif;font-size:1rem;color:#712d43}
+.document-hero-art strong{display:block;font:normal 2.15rem/1.1 Georgia,serif;margin:32px 0 25px}
+.document-hero-art i{display:block;width:100%;height:5px;background:#e7dcd3;margin:11px 0}
+.document-hero-art i:last-child{width:55%}
+.document-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.document-card{display:flex;flex-direction:column;align-items:flex-start;min-height:325px;padding:30px;text-decoration:none;border:1px solid #e8dedc;background:#fff;box-shadow:0 15px 30px #39222b09;transition:transform .2s ease,box-shadow .2s ease}
+.document-card:hover{transform:translateY(-4px);box-shadow:0 20px 35px #39222b16}
+.document-card-icon{width:52px;height:52px;display:grid;place-items:center;border:1px solid #d7bd9b;border-radius:50%;color:#793147;background:#faf4e9;font-size:1.7rem;margin-bottom:25px}
+.document-card-category{color:var(--burgundy);font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.17em}
+.document-card h3{font:normal 1.65rem Georgia,serif;letter-spacing:-.035em;margin:9px 0}
+.document-card p{color:var(--muted);font-size:.82rem;line-height:1.65;margin:0 0 25px}
+.document-card-action{margin-top:auto;color:var(--burgundy);font-size:.78rem;font-weight:800;border-bottom:1px solid #d1b1a8;padding-bottom:5px}
+.document-shell{padding:30px 0 95px}
+.document-paper{max-width:850px;margin:28px auto 0;padding:65px 80px 72px;background:#fff;box-shadow:0 20px 55px #4b243214;border:1px solid #e8dedc;border-top:5px solid #d2a560}
+.document-paper h1{font:normal clamp(2.5rem,4vw,4.1rem)/1.1 Georgia,serif;letter-spacing:-.05em;color:#3b1725;margin:14px 0 15px}
+.document-paper h2{font:normal 1.65rem Georgia,serif;color:#4c2434;margin:33px 0 9px}
+.document-paper p{color:#5e5556;font-size:.92rem;line-height:1.8;margin:0}
+.document-paper .document-lead{font-size:1.08rem;color:#705961;max-width:650px}
+.document-rule{height:1px;background:#e5d5cb;margin:33px 0}
+.document-paper .document-note{margin-top:40px;padding:20px 24px;background:#faf5ed;border-left:3px solid #c9a064;font-size:.82rem}
+.document-after{max-width:850px;margin:28px auto 0;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.document-after p{color:var(--muted);margin:0}
+@media(max-width:900px){.document-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.cards-hero-stack{display:none}.card-visual{min-height:235px}.card-range .detail-card{padding:0 24px 30px}.card-visual{margin:0 -24px 25px}.application-card-options{gap:8px}.application-card-options figure{padding:8px}.application-card-options figcaption{font-size:.64rem}.document-grid{grid-template-columns:1fr}.document-card{min-height:265px}.document-paper{padding:40px 25px}.document-after{display:block}.document-after .text-link{margin-top:12px}}

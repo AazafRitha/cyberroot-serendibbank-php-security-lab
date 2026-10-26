@@ -2,7 +2,7 @@
 
 ![SerendibBank logo](public/assets/logo.svg)
 
-SerendibBank is a PHP and MySQL website with public product pages and an online banking portal. It includes customer sign in, verification, account activity, transfers, account and card applications, support requests with attachments, a digital assistant, and a staff workspace. The layout works across desktop and mobile screens.
+SerendibBank is a PHP and MySQL website with public product pages, product information documents, and an online banking portal. It includes customer sign in, verification, account activity, transfers, account and card applications, support requests with attachments, a digital assistant, and a staff workspace. The layout works across desktop and mobile screens.
 
 ## Run locally
 

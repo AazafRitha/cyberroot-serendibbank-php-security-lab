@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Accounts | SerendibBank</title>
+    <link rel="stylesheet" href="../public/assets/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="home.html" aria-label="SerendibBank home">
+                <span class="brand-mark">SB</span>
+                <span><strong>SerendibBank</strong><small>Personal banking</small></span>
+            </a>
+            <nav aria-label="Main navigation">
+                <a href="home.html">Home</a>
+                <a href="accounts.html" aria-current="page">Accounts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main" class="container">
+        <section class="page-heading">
+            <div>
+                <div class="eyebrow">Personal banking</div>
+                <h1>Account overview</h1>
+                <p>Balances and recent activity in one place.</p>
+            </div>
+            <span class="status-pill">2 accounts</span>
+        </section>
+
+        <section aria-labelledby="accounts-title">
+            <h2 id="accounts-title" class="section-title">Accounts</h2>
+            <div class="account-grid">
+                <article class="account-card">
+                    <div class="account-top"><span>Everyday account</span><span>SerendibBank</span></div>
+                    <p class="account-number">241000128453</p>
+                    <p class="balance"><small>Available balance</small><strong>LKR 184250.75</strong></p>
+                </article>
+                <article class="account-card">
+                    <div class="account-top"><span>Savings account</span><span>SerendibBank</span></div>
+                    <p class="account-number">241000128454</p>
+                    <p class="balance"><small>Available balance</small><strong>LKR 520000.00</strong></p>
+                </article>
+            </div>
+        </section>
+
+        <section aria-labelledby="activity-title" class="activity-section">
+            <h2 id="activity-title" class="section-title">Recent activity</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Date</th><th scope="col">Description</th><th scope="col">Amount</th></tr></thead>
+                    <tbody>
+                        <tr><td>2026-10-22</td><td>Salary payment</td><td class="amount">LKR 125000.00</td></tr>
+                        <tr><td>2026-10-20</td><td>Grocery purchase</td><td class="amount">LKR -6850.50</td></tr>
+                        <tr><td>2026-10-18</td><td>Electricity payment</td><td class="amount">LKR -4300.00</td></tr>
+                        <tr><td>2026-10-16</td><td>Transfer to savings</td><td class="amount">LKR 25000.00</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer container">
+        <span>&copy; 2026 SerendibBank</span>
+        <span>Banking for what matters next.</span>
+    </footer>
+</body>
+</html>

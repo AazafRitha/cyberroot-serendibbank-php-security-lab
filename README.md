@@ -16,6 +16,8 @@ The starter app contains a read-only account dashboard backed by fictional MySQL
 
 Start with the [Windows Docker walkthrough](docs/docker-on-windows.md), which covers WSL 2, Docker Desktop, the first run, and troubleshooting. From this folder, after Docker Desktop is running:
 
+Until Docker is available, open [design/home.html](design/home.html) in a browser to inspect the static front-end preview. Its Accounts link opens a second preview page. The PHP application remains the live source for deployment.
+
 ```powershell
 Copy-Item .env.example .env
 docker compose up --build -d

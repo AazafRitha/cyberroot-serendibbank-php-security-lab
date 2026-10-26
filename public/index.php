@@ -36,6 +36,8 @@ $router->get('/support', [$pages, 'support']);
 $auth = new AuthController();
 $router->get('/login', [$auth, 'showLogin']);
 $router->post('/login', [$auth, 'login']);
+$router->get('/verify', [$auth, 'showOtp']);
+$router->post('/verify', [$auth, 'verifyOtp']);
 $router->post('/logout', [$auth, 'logout']);
 $transfer = new TransferController();
 $router->get('/transfer', [$transfer, 'show']);

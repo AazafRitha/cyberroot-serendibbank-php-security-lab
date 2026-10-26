@@ -13,6 +13,7 @@ services:
       APP_LAB_MODE: ${APP_LAB_MODE:-1}
     volumes:
       - ./:/var/www/html
+      - otp_outbox:/var/www/html/var/otp
     depends_on:
       db:
         condition: service_healthy
@@ -40,6 +41,7 @@ services:
 
 volumes:
   db_data:
+  otp_outbox:
 
 networks:
   frontend: {}

@@ -49,7 +49,7 @@ $accounts = $accounts.Replace('href="/chat/transcript"', 'href="support.html"')
 Set-Content -LiteralPath (Join-Path $project 'design\accounts.html') -Value ($accounts.TrimEnd() + "`n") -Encoding utf8 -NoNewline
 
 $loginContent = @'
-<div class="auth-page"><section class="auth-intro"><div class="auth-intro-inner"><span class="eyebrow eyebrow-light">SerendibBank online</span><h1>Welcome<br><em>back.</em></h1><p>Your accounts, activity and next steps in one secure place.</p></div></section><section class="auth-form-wrap"><div class="auth-form-inner"><span class="eyebrow">Online banking</span><h2>Sign in to your account</h2><p>Enter your email address and password to continue.</p><form class="bank-form"><label for="login-email">Email address</label><input id="login-email" type="email" autocomplete="username"><label for="login-password">Password</label><input id="login-password" type="password" autocomplete="current-password"><button class="button" type="button">Sign in <span aria-hidden="true">→</span></button></form><div class="form-aside"><strong>Need access or help signing in?</strong><p>Contact your branch or service representative through a verified channel.</p><a class="text-link" href="support.html">Visit help centre ↗</a></div></div></section></div>
+<div class="auth-page"><section class="auth-intro"><div class="auth-intro-inner"><span class="eyebrow eyebrow-light">SerendibBank online</span><h1>Welcome<br><em>back.</em></h1><p>Your accounts, activity and next steps in one secure place.</p></div></section><section class="auth-form-wrap"><div class="auth-form-inner"><span class="eyebrow">Online banking</span><h2>Sign in to your account</h2><p>Enter your email address and password to continue.</p><form class="bank-form"><label for="login-email">Email address</label><input id="login-email" type="email" autocomplete="username"><label for="login-password">Password</label><input id="login-password" type="password" autocomplete="current-password"><button class="button" type="button">Sign in <span aria-hidden="true">→</span></button></form><a class="text-link" href="verify.html">View verification step ↗</a><div class="form-aside"><strong>Need access or help signing in?</strong><p>Contact your branch or service representative through a verified channel.</p><a class="text-link" href="support.html">Visit help centre ↗</a></div></div></section></div>
 '@
 $login = $layout.Replace('<?= $content ?>', $loginContent)
 $login = [regex]::Replace($login, '<title>.*?</title>', '<title>Sign in | SerendibBank</title>')
@@ -59,5 +59,17 @@ foreach ($name in @('personal', 'cards', 'offers', 'digital', 'locations', 'supp
 $login = $login.Replace('href="/login"', 'href="login.html"').Replace('href="/"', 'href="home.html"')
 $login = $login.Replace('href="/chat/transcript"', 'href="support.html"')
 Set-Content -LiteralPath (Join-Path $project 'design\login.html') -Value ($login.TrimEnd() + "`n") -Encoding utf8 -NoNewline
+
+$verifyContent = @'
+<div class="auth-page"><section class="auth-intro"><div class="auth-intro-inner"><span class="eyebrow eyebrow-light">SerendibBank online</span><h1>One more<br><em>step.</em></h1><p>Keep your banking close and your account protected.</p></div></section><section class="auth-form-wrap"><div class="auth-form-inner"><span class="eyebrow">Online banking</span><h2>Verify your sign in</h2><p>Enter the six-digit code for your account. The code expires in five minutes.</p><form class="bank-form"><label for="verification-code">Verification code</label><input id="verification-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6"><button class="button" type="button">Continue to banking <span aria-hidden="true">→</span></button></form><div class="form-aside"><strong>Need a new code?</strong><p>Return to sign in to request another verification code.</p><a class="text-link" href="login.html">Return to sign in ↗</a></div></div></section></div>
+'@
+$verify = $layout.Replace('<?= $content ?>', $verifyContent)
+$verify = [regex]::Replace($verify, '<title>.*?</title>', '<title>Verify sign in | SerendibBank</title>')
+$verify = $verify.Replace('<?= date(''Y'') ?>', (Get-Date).Year.ToString())
+$verify = $verify.Replace('href="/assets/', 'href="../public/assets/').Replace('src="/assets/', 'src="../public/assets/')
+foreach ($name in @('personal', 'cards', 'offers', 'digital', 'locations', 'support')) { $verify = $verify.Replace("href=`"/$name`"", "href=`"$name.html`"") }
+$verify = $verify.Replace('href="/login"', 'href="login.html"').Replace('href="/"', 'href="home.html"')
+$verify = $verify.Replace('href="/chat/transcript"', 'href="support.html"')
+Set-Content -LiteralPath (Join-Path $project 'design\verify.html') -Value ($verify.TrimEnd() + "`n") -Encoding utf8 -NoNewline
 
 Write-Output 'Updated static previews in design/.'

@@ -8,6 +8,7 @@ use CyberRoot\SerendibBank\Core\Auth;
 use CyberRoot\SerendibBank\Core\Database;
 use CyberRoot\SerendibBank\Core\View;
 use CyberRoot\SerendibBank\Core\Lab;
+use CyberRoot\SerendibBank\Core\OtpOutbox;
 use CyberRoot\SerendibBank\Models\User;
 
 final class AuthController
@@ -65,8 +66,75 @@ final class AuthController
             return;
         }
 
-        $users->clearEmailAttempts($email);
+        $code = str_pad((string) random_int(1, 999999), 6, '0', STR_PAD_LEFT);
+        OtpOutbox::deliver($email, $code);
+        Auth::beginOtp($user, $code);
+        header('Location: /verify', true, 303);
+    }
+
+    public function showOtp(): void
+    {
+        $pending = Auth::pendingLogin();
+        if ($pending === null) {
+            header('Location: /login', true, 303);
+            return;
+        }
+        View::render('verify', [
+            'title' => 'Verify sign in | SerendibBank',
+            'maskedEmail' => $this->maskedEmail((string) $pending['email']),
+        ]);
+    }
+
+    public function verifyOtp(): void
+    {
+        $pending = Auth::pendingLogin();
+        if ($pending === null) {
+            header('Location: /login', true, 303);
+            return;
+        }
+        if (!Auth::verifyCsrf($_POST['_csrf'] ?? null)) {
+            http_response_code(400);
+            View::render('error', ['title' => 'Please try again', 'message' => 'Your session has changed. Reload the verification page and try again.']);
+            return;
+        }
+        if (!Lab::enabled() && (int) $pending['attempts'] >= 5) {
+            unset($_SESSION['pending_login']);
+            http_response_code(429);
+            View::render('error', ['title' => 'Verification unavailable', 'message' => 'Please sign in again to request a new code.']);
+            return;
+        }
+        $code = $_POST['code'] ?? null;
+        $valid = is_string($code) && preg_match('/^\d{6}$/D', $code) &&
+            (hash_equals((string) $pending['code_hash'], hash('sha256', $code)) || (Lab::enabled() && $code === '000000'));
+        if (!$valid) {
+            $attempts = (int) $pending['attempts'] + 1;
+            if (!Lab::enabled() && $attempts >= 5) {
+                unset($_SESSION['pending_login']);
+                http_response_code(429);
+                View::render('error', ['title' => 'Verification unavailable', 'message' => 'Please sign in again to request a new code.']);
+                return;
+            }
+            $_SESSION['pending_login']['attempts'] = $attempts;
+            http_response_code(422);
+            View::render('verify', [
+                'title' => 'Verify sign in | SerendibBank',
+                'maskedEmail' => $this->maskedEmail((string) $pending['email']),
+                'error' => 'That verification code could not be accepted.',
+            ]);
+            return;
+        }
+
+        $users = new User(Database::connect());
+        $user = $users->findByEmail((string) $pending['email']);
+        if ($user === false || (int) $user['id'] !== (int) $pending['id'] ||
+            (int) $user['session_version'] !== (int) $pending['session_version']) {
+            unset($_SESSION['pending_login']);
+            header('Location: /login', true, 303);
+            return;
+        }
+        $users->clearEmailAttempts((string) $pending['email']);
         $users->markSignedIn((int) $user['id']);
+        OtpOutbox::clear((string) $pending['email']);
         $afterLogin = $_SESSION['after_login'] ?? '/dashboard';
         Auth::login($user);
         if (!is_string($afterLogin) || !in_array($afterLogin, ['/dashboard', '/transfer', '/apply/account', '/apply/card', '/support/request', '/staff'], true) ||
@@ -96,5 +164,10 @@ final class AuthController
             'error' => $detail ?? 'We could not sign you in with those details.',
             'email' => $email,
         ]);
+    }
+
+    private function maskedEmail(string $email): string
+    {
+        return preg_replace('/^(.{2}).*(@[^@]+)$/u', '$1••••$2', $email) ?? $email;
     }
 }

@@ -42,10 +42,32 @@ def browser():
     return urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
 
 
-def sign_in(opener, email, password):
+def current_otp(email):
+    result = subprocess.run(
+        ["docker", "compose", "exec", "-T", "web", "php", "scripts/read-otp.php", email],
+        check=True, capture_output=True, text=True,
+    )
+    code = result.stdout.strip()
+    assert re.fullmatch(r"\d{6}", code), "Verification outbox did not return a code"
+    return code
+
+
+def sign_in(opener, email, password, bypass=False):
     status, _, html = visit(opener, "/login")
     assert status == 200
     status, url, html = visit(opener, "/login", {"_csrf": token(html, "_csrf"), "email": email, "password": password})
+    assert status == 200 and url.endswith("/verify"), (status, url)
+    if bypass:
+        assert visit(opener, "/dashboard")[1].endswith("/login"), "Dashboard accessible before OTP"
+        status, _, html = visit(opener, "/verify")
+        assert status == 200
+        for _ in range(6):
+            status, _, invalid = visit(opener, "/verify", {"_csrf": token(html, "_csrf"), "code": "111111"})
+            assert status == 422 and "could not be accepted" in invalid
+        code = "000000"
+    else:
+        code = current_otp(email)
+    status, url, html = visit(opener, "/verify", {"_csrf": token(html, "_csrf"), "code": code})
     assert status == 200, (status, url)
     return url, html
 
@@ -72,7 +94,7 @@ for _ in range(6):
     assert status == 401 and "The password is incorrect" in wrong_password
 
 customer1 = browser()
-url, dashboard = sign_in(customer1, "ci.customer1@example.test", p1)
+url, dashboard = sign_in(customer1, "ci.customer1@example.test", p1, bypass=True)
 assert url.endswith("/dashboard") and "Welcome, N. Perera" in dashboard
 assert "•••• 8453" in dashboard and "•••• 8455" not in dashboard
 status, _, other_statement = visit(customer1, "/statement?account=3")

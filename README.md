@@ -4,7 +4,7 @@
 
 SerendibBank is a fictional banking website for CyberRoot security training. This is a **new PHP/MySQL repository**; the earlier AazafRitha banking lab repository is untouched. The banking UI uses product and service language, while this repository documents the educational purpose.
 
-The site has responsive product pages, a guided banking assistant, customer login and account activity, own-account transfers, account and card applications, support requests, and a staff workspace. Fictional MySQL data is seeded; portal user accounts are created explicitly. With `APP_LAB_MODE=1`, the **main site itself** contains intentional weaknesses in login, account statements, branch search, repeat transfers, and the assistant-to-staff handoff. The older standalone exercises remain under `scenarios/` for focused practice.
+The site has responsive product pages, a guided banking assistant, customer login with a six-digit verification step, account activity, own-account transfers, account and card applications, support requests, and a staff workspace. Fictional MySQL data is seeded; portal user accounts are created explicitly. With `APP_LAB_MODE=1`, the **main site itself** contains intentional weaknesses in login, OTP verification, account statements, branch search, repeat transfers, and the assistant-to-staff handoff. The older standalone exercises remain under `scenarios/` for focused practice.
 
 ## Run on your Windows laptop
 
@@ -23,7 +23,13 @@ docker compose exec web php scripts/create-user.php 'customer2@example.test' 'M.
 docker compose exec web php scripts/create-user.php 'staff@example.test' 'Service Officer' staff
 ```
 
-Open `/login` and sign in with a generated password. To reset an account password and invalidate its old sessions:
+Open `/login` and sign in with a generated password. The local lab delivers each five-minute OTP to an operator-only Docker outbox rather than a real email provider. In another PowerShell window, read the latest code for the account you are testing:
+
+```powershell
+docker compose exec web php scripts/read-otp.php 'customer1@example.test'
+```
+
+Enter that code at `/verify`. The code is removed from the outbox after successful verification. The intentionally weak lab-mode verification behavior is documented in the [main-site validation guide](validation/main-site.md#otp-verification-bypass). To reset an account password and invalidate its old sessions:
 
 ```powershell
 docker compose exec web php scripts/reset-password.php 'customer1@example.test'
@@ -52,4 +58,4 @@ Start with the [main-site validation guide](validation/main-site.md), then use t
 
 The new repository is [AazafRitha/cyberroot-serendibbank-php-security-lab](https://github.com/AazafRitha/cyberroot-serendibbank-php-security-lab). Use the [Git workflow](docs/git-workflow.md) for later changes. Never commit `.env`, generated passwords, or real customer data.
 
-The Compose stack binds the website to `127.0.0.1` and leaves MySQL unexposed. It is **not** a public-VM configuration, especially with `APP_LAB_MODE=1`. Follow the [public VM plan](docs/public-vm-plan.md) for TLS, account isolation, rules of engagement, logging, backups, reset, and challenge isolation. Do not expose it publicly by changing the port binding alone.
+The Compose stack binds the website to `127.0.0.1` and leaves MySQL and the OTP outbox unexposed. It is **not** a public-VM configuration, especially with `APP_LAB_MODE=1`. Follow the [public VM plan](docs/public-vm-plan.md) for TLS, code delivery, account isolation, rules of engagement, logging, backups, reset, and challenge isolation. Do not expose it publicly by changing the port binding alone.

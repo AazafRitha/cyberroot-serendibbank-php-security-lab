@@ -68,6 +68,37 @@ final class Auth
     }
 
     /** @param array<string, mixed> $user */
+    public static function beginOtp(array $user, string $code): void
+    {
+        $afterLogin = $_SESSION['after_login'] ?? null;
+        session_regenerate_id(true);
+        $_SESSION = [];
+        if (is_string($afterLogin)) {
+            $_SESSION['after_login'] = $afterLogin;
+        }
+        $_SESSION['pending_login'] = [
+            'id' => (int) $user['id'],
+            'email' => (string) $user['email'],
+            'session_version' => (int) $user['session_version'],
+            'code_hash' => hash('sha256', $code),
+            'expires_at' => time() + 300,
+            'attempts' => 0,
+        ];
+        self::csrfToken();
+    }
+
+    /** @return array<string, mixed>|null */
+    public static function pendingLogin(): ?array
+    {
+        $pending = $_SESSION['pending_login'] ?? null;
+        if (!is_array($pending) || (int) ($pending['expires_at'] ?? 0) < time()) {
+            unset($_SESSION['pending_login']);
+            return null;
+        }
+        return $pending;
+    }
+
+    /** @param array<string, mixed> $user */
     public static function login(array $user): void
     {
         session_regenerate_id(true);

@@ -2,11 +2,15 @@
 
 The root Compose stack enables `APP_LAB_MODE=1` and binds the website to <http://localhost:8080>. These flaws are deliberately part of the realistic banking UI during local practice. Use only the seeded fictional customers. Start the root stack with `docker compose up --build -d`; an existing `.env` is preserved. Recreate the web service after changing `APP_LAB_MODE` with `docker compose up -d --force-recreate web`.
 
-Create two customer logins and one staff login if needed (see the [README](../README.md#run-on-your-windows-laptop)). The seeded accounts are customer 1: IDs `1`, `2`; customer 2: IDs `3`, `4`. Save generated passwords privately. The `validation/check-core.py` script exercises the same behaviors in CI.
+Create two customer logins and one staff login if needed (see the [README](../README.md#run-on-your-windows-laptop)). The seeded accounts are customer 1: IDs `1`, `2`; customer 2: IDs `3`, `4`. Save generated passwords privately. After a correct password, the site requests a six-digit OTP at `/verify`. To complete the ordinary flow, the operator reads it with `docker compose exec web php scripts/read-otp.php 'customer1@example.test'`. The outbox is available only inside Docker, and the code expires in five minutes. The `validation/check-core.py` script exercises the same behaviors in CI.
 
 ## Weak login
 
 At `/login`, try an unknown email with any password, then a real fictional email with a wrong password. **Expected:** different messages reveal whether the account exists. Repeat the wrong password more than five times; the form keeps accepting attempts. When `APP_LAB_MODE=0`, errors become generic and failed attempts are throttled.
+
+## OTP verification bypass
+
+Sign in with a valid fictional email and password. The browser reaches `/verify`; trying `/dashboard` before verification sends you back to sign in. Ask the operator for the current code, or have them run the `read-otp.php` command above. Instead of that code, try `000000`. **Expected in lab mode:** the site signs you in. To check the missing attempt limit, sign in again and submit an incorrect six-digit value at least six times before entering `000000`; verification still succeeds. The code `000000` is never issued as a normal code. With `APP_LAB_MODE=0`, the fixed code fails, five failed attempts end the pending challenge, and a newly issued valid code succeeds once.
 
 ## Account statement access
 

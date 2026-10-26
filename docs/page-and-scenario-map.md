@@ -5,7 +5,7 @@ The public site presents SerendibBank as a fictional retail bank. This repositor
 | Banking area | Live route | Functional workflow | Main-site lab weakness |
 | --- | --- | --- | --- |
 | Home and products | `/`, `/personal`, `/cards`, `/offers`, `/digital` | Product navigation and discovery | Entry points to the banking flows |
-| Online banking | `/login` | Customer or staff authentication | [Account enumeration and no throttling](../validation/main-site.md#weak-login) |
+| Online banking | `/login`, `/verify` | Password and six-digit verification | [Account enumeration and no throttling](../validation/main-site.md#weak-login); [OTP bypass](../validation/main-site.md#otp-verification-bypass) |
 | My banking | `/dashboard`, `/statement` | Accounts, activity, statements | [Statement access control](../validation/main-site.md#account-statement-access) |
 | Transfers | `/transfer`, `/transfer/repeat` | Own-account funds movement | [State-changing GET](../validation/main-site.md#repeat-transfer-csrf) |
 | Applications | `/apply/account`, `/apply/card` | Product-specific forms and status tracking | Ownership checks in [core validation](../validation/core-portal.md) |

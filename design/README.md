@@ -1,5 +1,5 @@
 # Offline front-end preview
 
-Open `home.html` directly in a browser. The Accounts link opens `accounts.html`. These are static copies of the current PHP views so visual work can continue without Docker, PHP, or MySQL.
+Open `home.html` directly in a browser. Its navigation opens static previews of Personal, Cards, Offers, Digital banking, Locations, Support, Login, and Accounts. The offer and location filters work in the preview. This lets visual work continue without Docker, PHP, or MySQL.
 
-The live site still uses `app/Views/` and the shared stylesheet at `public/assets/style.css`. Keep the static preview aligned with those views while designing, then verify the PHP pages in Docker once it is installed. This `design/` folder is excluded from the Docker image and is outside the public document root.
+The live site uses `app/Views/` and the shared assets in `public/assets/`. After editing a marketing view or layout, run `powershell -ExecutionPolicy Bypass -File scripts/build-preview.ps1` from the project root to refresh the previews. The Login and Accounts previews are visual only: sign-in, applications, transfers, support requests, and staff actions require the live PHP/MySQL app. This `design/` folder is outside the public document root.

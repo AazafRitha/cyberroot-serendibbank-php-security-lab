@@ -23,6 +23,9 @@ final class View
             'UTF-8'
         );
 
+        $data['currentUser'] = Auth::user();
+        $data['csrfToken'] = Auth::csrfToken();
+
         ob_start();
         require $viewPath;
         $content = ob_get_clean();

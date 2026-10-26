@@ -1,0 +1,13 @@
+<div class="auth-page">
+    <section class="auth-intro"><div class="auth-intro-inner"><span class="eyebrow eyebrow-light">SerendibBank online</span><h1>Welcome<br><em>back.</em></h1><p>Your accounts, activity and next steps in one secure place.</p><div class="auth-intro-rule"></div><small>Banking for what matters next.</small></div></section>
+    <section class="auth-form-wrap" aria-labelledby="login-title"><div class="auth-form-inner"><span class="eyebrow">Online banking</span><h2 id="login-title">Sign in to your account</h2><p>Enter your email address and password to continue.</p>
+        <?php if (!empty($data['error'])): ?><div class="form-error" role="alert"><?= $escape($data['error']) ?></div><?php endif; ?>
+        <form method="post" action="/login" class="bank-form">
+            <input type="hidden" name="_csrf" value="<?= $escape($data['csrfToken']) ?>">
+            <label for="login-email">Email address</label><input id="login-email" name="email" type="email" autocomplete="username" maxlength="190" required value="<?= $escape($data['email'] ?? '') ?>">
+            <label for="login-password">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password" required>
+            <button class="button" type="submit">Sign in <span aria-hidden="true">→</span></button>
+        </form>
+        <div class="form-aside"><strong>Need access or help signing in?</strong><p>Contact your branch or service representative through a verified channel.</p><a class="text-link" href="/support">Visit help centre <span aria-hidden="true">↗</span></a></div>
+    </div></section>
+</div>

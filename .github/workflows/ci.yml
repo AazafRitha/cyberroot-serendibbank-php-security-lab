@@ -1,0 +1,45 @@
+name: PHP lab checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure local lab
+        run: cp .env.example .env
+      - name: Start core
+        run: docker compose up --build -d
+      - name: Lint PHP files
+        run: |
+          find app public scripts scenarios -name '*.php' -print0 | xargs -0 -n1 docker compose exec -T web php -l
+      - name: Check customer and staff workflows
+        run: python3 validation/check-core.py
+      - name: Show service logs on failure
+        if: failure()
+        run: docker compose logs --tail=100
+      - name: Stop core
+        if: always()
+        run: docker compose down -v
+
+  scenarios:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [broken-access-control, sql-injection, stored-xss, csrf-transfer, weak-login]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start scenario
+        run: docker compose -f scenarios/${{ matrix.name }}/compose.yaml up --build -d
+      - name: Verify exercise behaviour
+        run: python3 validation/check-scenario.py ${{ matrix.name }}
+      - name: Show service logs on failure
+        if: failure()
+        run: docker compose -f scenarios/${{ matrix.name }}/compose.yaml logs --tail=100
+      - name: Stop scenario
+        if: always()
+        run: docker compose -f scenarios/${{ matrix.name }}/compose.yaml down -v

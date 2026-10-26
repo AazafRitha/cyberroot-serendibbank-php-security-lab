@@ -3,6 +3,8 @@
 !.env.example
 vendor/
 node_modules/
+__pycache__/
+*.pyc
 *.log
 coverage/
 .idea/

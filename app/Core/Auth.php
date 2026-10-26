@@ -1,0 +1,138 @@
+<?php
+
+declare(strict_types=1);
+
+namespace CyberRoot\SerendibBank\Core;
+
+final class Auth
+{
+    private const IDLE_SECONDS = 1800;
+    private const MAX_SECONDS = 28800;
+
+    public static function start(): void
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            return;
+        }
+
+        $secure = (getenv('APP_HTTPS') === '1') ||
+            (($_SERVER['HTTPS'] ?? '') === 'on') ||
+            (($_SERVER['SERVER_PORT'] ?? '') === '443');
+
+        ini_set('session.use_strict_mode', '1');
+        ini_set('session.use_only_cookies', '1');
+        ini_set('session.use_trans_sid', '0');
+        session_name('serendib_session');
+        session_set_cookie_params([
+            'lifetime' => 0,
+            'path' => '/',
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
+        session_start();
+
+        $auth = $_SESSION['auth'] ?? null;
+        if (is_array($auth)) {
+            $now = time();
+            $idle = $now - (int) ($auth['last_seen'] ?? 0);
+            $age = $now - (int) ($auth['signed_in_at'] ?? 0);
+            if ($idle > self::IDLE_SECONDS || $age > self::MAX_SECONDS) {
+                self::logout();
+                session_id('');
+                session_start();
+            } else {
+                $statement = Database::connect()->prepare(
+                    'SELECT customer_id, display_name, role, session_version FROM users WHERE id = :id LIMIT 1'
+                );
+                $statement->execute(['id' => (int) ($auth['id'] ?? 0)]);
+                $record = $statement->fetch();
+                if ($record === false || (int) $record['session_version'] !== (int) ($auth['session_version'] ?? 0)) {
+                    self::logout();
+                    session_id('');
+                    session_start();
+                } else {
+                    $_SESSION['auth']['last_seen'] = $now;
+                    $_SESSION['auth']['customer_id'] = $record['customer_id'] === null ? null : (int) $record['customer_id'];
+                    $_SESSION['auth']['name'] = (string) $record['display_name'];
+                    $_SESSION['auth']['role'] = (string) $record['role'];
+                }
+            }
+        }
+    }
+
+    /** @return array<string, mixed>|null */
+    public static function user(): ?array
+    {
+        return isset($_SESSION['auth']) && is_array($_SESSION['auth']) ? $_SESSION['auth'] : null;
+    }
+
+    /** @param array<string, mixed> $user */
+    public static function login(array $user): void
+    {
+        session_regenerate_id(true);
+        $_SESSION = [];
+        $_SESSION['auth'] = [
+            'id' => (int) $user['id'],
+            'customer_id' => $user['customer_id'] === null ? null : (int) $user['customer_id'],
+            'name' => (string) $user['display_name'],
+            'role' => (string) $user['role'],
+            'session_version' => (int) $user['session_version'],
+            'signed_in_at' => time(),
+            'last_seen' => time(),
+        ];
+        self::csrfToken();
+    }
+
+    public static function logout(): void
+    {
+        $_SESSION = [];
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', [
+                'expires' => time() - 3600,
+                'path' => $params['path'],
+                'secure' => $params['secure'],
+                'httponly' => $params['httponly'],
+                'samesite' => $params['samesite'],
+            ]);
+        }
+        session_destroy();
+    }
+
+    public static function csrfToken(): string
+    {
+        if (!isset($_SESSION['csrf']) || !is_string($_SESSION['csrf'])) {
+            $_SESSION['csrf'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf'];
+    }
+
+    public static function verifyCsrf(mixed $token): bool
+    {
+        return is_string($token) &&
+            isset($_SESSION['csrf']) &&
+            is_string($_SESSION['csrf']) &&
+            hash_equals($_SESSION['csrf'], $token);
+    }
+
+    /** @return array<string, mixed>|null */
+    public static function requireRole(string $role): ?array
+    {
+        $user = self::user();
+        if ($user === null) {
+            $path = parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH);
+            if (is_string($path) && in_array($path, ['/dashboard', '/transfer', '/apply/account', '/apply/card', '/support/request', '/staff'], true)) {
+                $_SESSION['after_login'] = $path;
+            }
+            header('Location: /login', true, 303);
+            return null;
+        }
+        if ($user['role'] !== $role) {
+            http_response_code(403);
+            View::render('error', ['title' => 'Access unavailable', 'message' => 'You cannot access this page.']);
+            return null;
+        }
+        return $user;
+    }
+}

@@ -1,39 +1,15 @@
-<section class="page-heading">
-    <div>
-        <div class="eyebrow">Personal banking</div>
-        <h1>Account overview</h1>
-        <p>Balances and recent activity in one place.</p>
-    </div>
-    <span class="status-pill"><?= count($data['accounts']) ?> accounts</span>
-</section>
+<div class="container portal-shell">
+    <div class="portal-topline"><span>SerendibBank online</span><form method="post" action="/logout"><input type="hidden" name="_csrf" value="<?= $escape($data['csrfToken']) ?>"><button class="text-button" type="submit">Sign out →</button></form></div>
+    <section class="portal-header"><div><span class="eyebrow">Good to see you</span><h1>Welcome, <?= $escape($data['name']) ?>.</h1><p>Here is the latest across your banking.</p></div><span class="status-pill"><?= count($data['accounts']) ?> accounts</span></section>
+    <?php if (!empty($data['flash'])): ?><div class="form-success" role="status"><?= $escape($data['flash']) ?></div><?php endif; ?>
+    <nav class="portal-actions" aria-label="Banking actions"><a href="/transfer"><span aria-hidden="true">⇄</span><strong>Transfer money</strong><small>Between your accounts</small><b aria-hidden="true">↗</b></a><a href="/apply/card"><span aria-hidden="true">▣</span><strong>Apply for a card</strong><small>Explore card options</small><b aria-hidden="true">↗</b></a><a href="/apply/account"><span aria-hidden="true">◫</span><strong>Open an account</strong><small>Plan your next step</small><b aria-hidden="true">↗</b></a><a href="/support/request"><span aria-hidden="true">?</span><strong>Get support</strong><small>Send us a message</small><b aria-hidden="true">↗</b></a></nav>
 
-<section aria-labelledby="accounts-title">
-    <h2 id="accounts-title" class="section-title">Accounts</h2>
-    <div class="account-grid">
-        <?php foreach ($data['accounts'] as $account): ?>
-            <article class="account-card">
-                <div class="account-top"><span><?= $escape($account['account_type']) ?></span><span>SerendibBank</span></div>
-                <p class="account-number"><?= $escape($account['account_number']) ?></p>
-                <p class="balance"><small>Available balance</small><strong><?= $escape($account['currency']) ?> <?= $escape($account['balance']) ?></strong></p>
-            </article>
-        <?php endforeach; ?>
-    </div>
-</section>
+    <section aria-labelledby="accounts-title" class="portal-section"><div class="portal-section-heading"><div><span class="eyebrow">Your money</span><h2 id="accounts-title">Accounts</h2></div></div><div class="account-grid">
+        <?php foreach ($data['accounts'] as $account): ?><article class="account-card"><div class="account-top"><span><?= $escape($account['account_type']) ?></span><span>SerendibBank</span></div><p class="account-number">•••• <?= $escape(substr((string) $account['account_number'], -4)) ?></p><p class="balance"><small>Available balance</small><strong><?= $escape($account['currency']) ?> <?= $escape($account['balance']) ?></strong></p></article><?php endforeach; ?>
+    </div></section>
 
-<section aria-labelledby="activity-title" class="activity-section">
-    <h2 id="activity-title" class="section-title">Recent activity</h2>
-    <div class="table-wrap">
-        <table>
-            <thead><tr><th scope="col">Date</th><th scope="col">Description</th><th scope="col">Amount</th></tr></thead>
-            <tbody>
-                <?php foreach ($data['transactions'] as $transaction): ?>
-                    <tr>
-                        <td><?= $escape(substr((string) $transaction['posted_at'], 0, 10)) ?></td>
-                        <td><?= $escape($transaction['description']) ?></td>
-                        <td class="amount"><?= $escape($transaction['currency']) ?> <?= $escape($transaction['amount']) ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-</section>
+    <section aria-labelledby="activity-title" class="portal-section"><div class="portal-section-heading"><div><span class="eyebrow">Recent activity</span><h2 id="activity-title">Transactions</h2></div><a class="text-link" href="/transfer">Make a transfer <span aria-hidden="true">↗</span></a></div><div class="table-wrap"><table><thead><tr><th scope="col">Date</th><th scope="col">Account</th><th scope="col">Description</th><th scope="col">Amount</th></tr></thead><tbody><?php foreach ($data['transactions'] as $transaction): ?><tr><td><?= $escape(substr((string) $transaction['posted_at'], 0, 10)) ?></td><td>•••• <?= $escape(substr((string) $transaction['account_number'], -4)) ?></td><td><?= $escape($transaction['description']) ?></td><td class="amount"><?= $escape($transaction['currency']) ?> <?= $escape($transaction['amount']) ?></td></tr><?php endforeach; ?><?php if ($data['transactions'] === []): ?><tr><td colspan="4">No activity to show yet.</td></tr><?php endif; ?></tbody></table></div></section>
+
+    <div class="portal-columns"><section aria-labelledby="applications-title" class="portal-section"><div class="portal-section-heading"><div><span class="eyebrow">Your next steps</span><h2 id="applications-title">Applications</h2></div><a href="/apply/account">Apply ↗</a></div><div class="request-list"><?php foreach ($data['applications'] as $application): ?><article><div><strong><?= $escape($application['product']) ?></strong><small><?= $escape(ucfirst($application['kind'])) ?> · <?= $escape(substr((string) $application['created_at'], 0, 10)) ?></small></div><span class="request-status"><?= $escape(ucfirst($application['status'])) ?></span></article><?php endforeach; ?><?php if ($data['applications'] === []): ?><p>No applications yet.</p><?php endif; ?></div></section>
+    <section aria-labelledby="support-title" class="portal-section"><div class="portal-section-heading"><div><span class="eyebrow">Here to help</span><h2 id="support-title">Support requests</h2></div><a href="/support/request">New message ↗</a></div><div class="request-list"><?php foreach ($data['supportRequests'] as $request): ?><article><div><strong><?= $escape($request['subject']) ?></strong><small><?= $escape(ucfirst($request['category'])) ?> · <?= $escape(substr((string) $request['created_at'], 0, 10)) ?></small></div><span class="request-status"><?= $escape(ucfirst($request['status'])) ?></span></article><?php endforeach; ?><?php if ($data['supportRequests'] === []): ?><p>No support requests yet.</p><?php endif; ?></div></section></div>
+</div>

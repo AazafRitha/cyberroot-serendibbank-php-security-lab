@@ -1,22 +1,14 @@
 # Architecture
 
-The core demo follows a small Model–View–Controller layout:
-
 ```text
-Browser → Apache public/ → public/index.php → Router → Controller
-                                                ↓          ↓
-                                               View ← Model → MySQL
+Browser → Apache public/ → front controller → router → controller
+                                               ↘ view  ↔ model → MySQL
 ```
 
-`public/` is Apache's document root, so application classes, database setup files, and `.env` are outside the web-accessible directory. The front controller registers the two GET routes. The dashboard controller reads only the fictional customer with ID 1; there is **no authentication or authorization system** in this starter.
+`public/` is the only web root. Application classes, setup scripts, documentation, and `.env` remain outside it. The core PHP 8.3 app has public product pages plus a customer portal and staff service workspace. Accounts are scoped to the signed-in customer's ID. Staff can review applications and resolve support requests, but cannot access customer money movement.
 
-`Account` uses native PDO prepared statements. The view renderer supplies a common HTML escaping helper. A database failure produces a generic browser message and writes details to the container's error log.
+Login uses PHP password hashes, a strict cookie session with regeneration after authentication, idle and absolute expiry, per-user session invalidation on password reset, generic error messages, and a database-backed attempt limit. POST forms check a session CSRF token. Views HTML-escape dynamic text. PDO statements bind input; transfers use a database transaction, row locks, ownership checks, balance conditions, and a request token to avoid duplicate movement. The core's CSP restricts scripts and frames.
 
-The database service has a named Docker volume, no published port, and only an internal database network. The web service joins that network and a separate frontend network, with its HTTP port published only to host loopback. MySQL runs `database/init.sql` when its data volume is first created.
+The Docker stack binds HTTP only to host loopback and leaves MySQL on an internal network. `database/init.sql` initializes a fresh named volume with fictional data. Changing that file does **not** migrate an existing volume. Use a migration for retained data; `docker compose down -v` is only for a disposable local database.
 
-## Next core features
-
-1. Add authentication, sessions, and authorization before creating account-specific routes.
-2. Add migrations for schema changes instead of editing the initial seed file after deployment.
-3. Add tests for account ownership, transaction integrity, and financial calculations before any write operations.
-4. Keep deliberately vulnerable variants outside `app/` and `public/`; follow [scenarios.md](scenarios.md).
+These controls support a learning environment but do not establish a production bank. The [public VM plan](public-vm-plan.md) lists deployment work. Intentionally vulnerable variants run as separate localhost stacks under `scenarios/`, with [validation steps](../validation/README.md).

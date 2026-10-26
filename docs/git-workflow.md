@@ -1,6 +1,6 @@
 # Git workflow
 
-The local repository starts on `main` with one initial commit. Once the new empty GitHub repository exists, connect and push it using the commands in the project README.
+This project has its own `main` branch and points to the new `AazafRitha/cyberroot-serendibbank-php-security-lab` repository. Keep the earlier banking lab repository untouched.
 
 For each feature or security exercise:
 

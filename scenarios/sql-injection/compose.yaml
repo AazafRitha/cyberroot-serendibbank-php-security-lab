@@ -1,0 +1,36 @@
+services:
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:8082:80"
+    environment:
+      DB_HOST: db
+      DB_NAME: branch_lab
+      DB_USER: branch_reader
+      DB_PASSWORD: local_only_branch_password
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - web
+      - database
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: branch_lab
+      MYSQL_USER: branch_reader
+      MYSQL_PASSWORD: local_only_branch_password
+      MYSQL_ROOT_PASSWORD: local_only_root_password
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_ROOT_PASSWORD mysql -h 127.0.0.1 -uroot -e 'SELECT 1' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - database
+networks:
+  web: {}
+  database:
+    internal: true

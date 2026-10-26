@@ -1,4 +1,4 @@
-<section class="hero error-page">
+<section class="container section error-page">
     <div class="eyebrow">SerendibBank</div>
     <h1><?= $escape($data['title'] ?? 'Error') ?></h1>
     <p><?= $escape($data['message'] ?? 'Please try again.') ?></p>

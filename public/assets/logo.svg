@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 128" role="img" aria-labelledby="title desc">
+  <title id="title">SerendibBank</title>
+  <desc id="desc">A burgundy and gold lotus vault symbol beside the SerendibBank name.</desc>
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F5D99A"/>
+      <stop offset=".5" stop-color="#CDA65C"/>
+      <stop offset="1" stop-color="#A77A39"/>
+    </linearGradient>
+    <linearGradient id="wine" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#68283F"/>
+      <stop offset="1" stop-color="#371522"/>
+    </linearGradient>
+  </defs>
+  <g>
+    <rect x="3" y="3" width="122" height="122" rx="24" fill="url(#wine)" stroke="url(#gold)" stroke-width="3"/>
+    <rect x="10" y="10" width="108" height="108" rx="18" fill="none" stroke="#D9B76F" stroke-opacity=".42"/>
+    <path d="M8 43h9v13H8m112-13h-9v13h9M8 72h9v13H8m112-13h-9v13h9" fill="url(#gold)"/>
+    <circle cx="64" cy="64" r="43" fill="#4A1C2C" stroke="url(#gold)" stroke-width="3"/>
+    <circle cx="64" cy="64" r="37" fill="none" stroke="#E6C987" stroke-opacity=".56"/>
+    <circle cx="64" cy="21" r="3" fill="url(#gold)"/><circle cx="107" cy="64" r="3" fill="url(#gold)"/><circle cx="64" cy="107" r="3" fill="url(#gold)"/><circle cx="21" cy="64" r="3" fill="url(#gold)"/>
+    <path d="M64 78C54 68 53 52 64 38c11 14 10 30 0 40Z" fill="url(#gold)"/>
+    <path d="M60 81C47 75 41 61 45 47c12 5 19 18 15 34ZM68 81c13-6 19-20 15-34-12 5-19 18-15 34Z" fill="#E2BE76"/>
+    <path d="M58 85C43 86 31 77 30 62c15 0 27 9 28 23Zm12 0c15 1 27-8 28-23-15 0-27 9-28 23Z" fill="url(#gold)"/>
+    <path d="M36 88c17 11 39 11 56 0" fill="none" stroke="#F4D99C" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <text x="152" y="65" fill="#4A1C2C" font-family="Georgia, 'Times New Roman', serif" font-size="44" letter-spacing="-2">Serendib</text>
+  <text x="328" y="65" fill="#AF813F" font-family="Georgia, 'Times New Roman', serif" font-size="44" letter-spacing="-2">Bank</text>
+  <path d="M154 80h320" stroke="#C9A45E" stroke-width="1.5"/>
+  <text x="155" y="103" fill="#6E5E61" font-family="Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="3">HERE FOR EVERY TOMORROW</text>
+</svg>

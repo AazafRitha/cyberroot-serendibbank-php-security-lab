@@ -7,6 +7,7 @@ namespace CyberRoot\SerendibBank\Controllers;
 use CyberRoot\SerendibBank\Core\Auth;
 use CyberRoot\SerendibBank\Core\Database;
 use CyberRoot\SerendibBank\Core\View;
+use CyberRoot\SerendibBank\Core\Lab;
 use CyberRoot\SerendibBank\Models\Portal;
 use CyberRoot\SerendibBank\Models\Account;
 
@@ -95,10 +96,15 @@ final class ApplicationController
         $income = $isCredit ? $income : null;
         $linkedAccount = $isDebit ? (int) $linkedAccount : null;
 
+        $status = 'pending';
+        if (Lab::enabled() && in_array($_POST['status'] ?? null, ['pending', 'reviewed'], true)) {
+            // Lab exercise: a client-supplied workflow state reaches the database.
+            $status = $_POST['status'];
+        }
         (new Portal(Database::connect()))->createApplication(
-            (int) $user['customer_id'], $kind, $product, $linkedAccount, $employment, $income, trim($notes)
+            (int) $user['customer_id'], $kind, $product, $linkedAccount, $employment, $income, trim($notes), $status
         );
-        $_SESSION['flash_success'] = 'Your application was received and is awaiting review.';
+        $_SESSION['flash_success'] = 'Your application was received.';
         header('Location: /dashboard', true, 303);
     }
 }

@@ -19,13 +19,14 @@ final class Portal
         ?int $linkedAccountId,
         ?string $employment,
         ?string $income,
-        ?string $notes
+        ?string $notes,
+        string $status = 'pending'
     ): void {
         $statement = $this->pdo->prepare(
-            'INSERT INTO applications (customer_id, kind, product, linked_account_id, employment_status, monthly_income, notes)
-             VALUES (?, ?, ?, ?, ?, ?, ?)'
+            'INSERT INTO applications (customer_id, kind, product, linked_account_id, employment_status, monthly_income, notes, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
         );
-        $statement->execute([$customerId, $kind, $product, $linkedAccountId, $employment, $income, $notes]);
+        $statement->execute([$customerId, $kind, $product, $linkedAccountId, $employment, $income, $notes, $status]);
     }
 
     public function createSupportRequest(int $customerId, string $category, string $subject, string $message): void

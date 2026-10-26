@@ -20,6 +20,18 @@ Sign in as customer 1 and open a statement from `/dashboard`. The URL contains `
 
 Open `/locations` and use **Search branches**. A normal city such as `Colombo` returns one result. Search for `' OR 1=1 #`. **Expected:** every fictional branch appears because the city input changes the SQL predicate. With lab mode off, input is bound as data and no branches match that text.
 
+## Offer search reflected XSS
+
+Open `/offers` and use **Search card offers**. Search for `<img src=x onerror=alert(1)>`. **Expected in lab mode:** the search results page inserts the query as HTML and the browser runs the event handler. The original offer cards and browser category filter are separate; this exercise is in the server search results at `/offers/search`. With lab mode off, the same text is escaped and inline scripts are blocked.
+
+## Application status tampering
+
+Sign in as a fictional customer and open `/apply/account`. The form does not show a status field. Before submitting a valid application, use browser developer tools or an intercepting proxy to add `status=reviewed` to the POST body. **Expected in lab mode:** the new application appears as **Reviewed** in the customer dashboard without staff action. A normal submission remains **Pending**. With lab mode off, the extra field is ignored and every new application starts pending. The same client-controlled field also affects `/apply/card`.
+
+## Digital banking open redirect
+
+Open `/digital` and follow **Go to online banking**; it normally sends you to `/login` through `/digital/continue?next=/login`. Change `next` to `https://example.org/serendib-check` and inspect the response's `Location` header. **Expected in lab mode:** the response redirects to that external address. With lab mode off, external destinations are replaced with `/login`. This route redirects the browser only; the server does not fetch the destination.
+
 ## Repeat-transfer CSRF
 
 Sign in as customer 1 and use **Repeat transfer** on `/dashboard`; it moves LKR 100.00 between that customer's two fictional accounts. Revisit the resulting `/transfer/repeat?from=1&to=2&amount=100.00` URL directly or open it as a link from another page. **Expected:** each GET changes balances without a form confirmation or CSRF token. Normal `/transfer` remains a POST form with CSRF protection. With lab mode off, `/transfer/repeat` returns 404. Browser cookie settings affect cross-site delivery; the local check proves the unsafe state-changing GET.

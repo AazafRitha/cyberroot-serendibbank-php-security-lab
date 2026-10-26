@@ -403,4 +403,11 @@ tr:last-child td{border-bottom:0}
 .branch-search-form>div{display:flex;gap:10px;max-width:650px}
 .branch-search-form input{flex:1;min-width:0;min-height:45px;padding:11px 13px;border:1px solid #cbb9b8;border-radius:4px;background:#fff;font:inherit}
 .branch-search-form button{border:0;cursor:pointer}
+.offer-search-entry{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:32px 36px 70px}
+.offer-search-entry h2{font:normal clamp(2rem,3vw,3rem) Georgia,serif;color:#4d2035;margin:10px 0}
+.offer-search-entry p{max-width:420px;color:#6d5e61;line-height:1.6}
+.offer-search-entry .branch-search-form{margin-top:0}
+.offer-search-page .offer-search-summary{margin:24px 0 18px;color:#5b4350}
+.offer-search-page .offer-grid{margin-bottom:60px}
+@media(max-width:750px){.offer-search-entry{display:block;padding:30px 0 60px}.offer-search-entry .branch-search-form{margin-top:24px}}
 @media(max-width:650px){.page-hero-inner>div.page-hero-photo{display:block;height:225px;margin:-24px 0 28px}.page-hero-inner>.page-hero-photo img{object-position:center}.branch-search-form>div{display:block}.branch-search-form button{margin-top:10px;width:100%}}

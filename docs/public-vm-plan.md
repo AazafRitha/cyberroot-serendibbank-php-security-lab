@@ -13,4 +13,4 @@ Before public access:
 5. Add request and audit logs, abuse controls, backups/snapshots, a repeatable fictional-data reset, and a response plan.
 6. Test staging, recovery, access controls, and deployment configuration before announcing the target. Review each intended weakness's impact, scope, and reset behavior. Keep the challenge VM isolated from real systems and data.
 
-Do not publish the current Compose stack by changing its port binding. Its lab mode deliberately weakens password and OTP verification and exposes fictional customer data through several flows. A public challenge needs its own deployment configuration, participant scope, monitoring, and recovery process.
+Do not publish the current Compose stack by changing its port binding. Its lab mode deliberately weakens authentication, accepts external redirects, renders untrusted HTML, and exposes fictional customer data through several flows. A public challenge needs its own deployment configuration, participant scope, monitoring, and recovery process.

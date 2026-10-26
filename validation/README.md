@@ -1,6 +1,8 @@
 # Exercise validation
 
-The [main site](main-site.md) now has six integrated intentional weaknesses when `APP_LAB_MODE=1`. Start at <http://localhost:8080> and use the real customer and staff flows to validate them. Use only fictional data and systems you control.
+The [main site](main-site.md) now has nine integrated intentional weaknesses when `APP_LAB_MODE=1`. Start at <http://localhost:8080> and use the real customer and staff flows to validate them. Use only fictional data and systems you control.
+
+GitHub Actions runs the main-site checks twice on fresh databases: once with lab mode enabled to prove the exercises exist, and once with `APP_LAB_MODE=0` to verify the corresponding protections.
 
 The original focused exercises below also run as independent Compose projects, each bound to `127.0.0.1`. Start one from its scenario folder with `docker compose up --build -d`, follow its linked check, then run `docker compose down`.
 

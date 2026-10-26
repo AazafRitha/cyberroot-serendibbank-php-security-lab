@@ -42,6 +42,20 @@ def browser():
     return urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
 
 
+def redirect_location(path):
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, request, file_pointer, code, message, headers, new_url):
+            return None
+
+    opener = urllib.request.build_opener(NoRedirect())
+    try:
+        opener.open(BASE + path, timeout=15)
+    except urllib.error.HTTPError as error:
+        assert error.code == 303
+        return error.headers.get("Location")
+    raise AssertionError("Expected a redirect")
+
+
 def current_otp(email):
     result = subprocess.run(
         ["docker", "compose", "exec", "-T", "web", "php", "scripts/read-otp.php", email],
@@ -103,6 +117,15 @@ assert status == 200 and "M. Fernando" in other_statement and "241000128455" in 
 status, _, all_branches = visit(customer1, "/locations/search?q=" + urllib.parse.quote("' OR 1=1 #"))
 assert status == 200 and all(city in all_branches for city in ("Colombo", "Kandy", "Galle", "Jaffna"))
 
+offer_payload = '<img src=x onerror=alert(1)>'
+status, _, dining_results = visit(customer1, "/offers/search?q=dining")
+assert status == 200 and "Make every meal memorable" in dining_results and "A better way to get away" not in dining_results
+status, _, offer_results = visit(customer1, "/offers/search?q=" + urllib.parse.quote(offer_payload))
+assert status == 200 and offer_payload in offer_results, "Offer search query was not reflected as HTML"
+
+outside = "https://example.org/serendib-check"
+assert redirect_location("/digital/continue?next=" + urllib.parse.quote(outside)) == outside, "External destination was not accepted in lab mode"
+
 status, _, transfer = visit(customer1, "/transfer")
 assert status == 200
 status, _, _ = visit(customer1, "/transfer", {"from_account": 1, "to_account": 2, "amount": "10.00"})
@@ -125,6 +148,13 @@ status, _, _ = visit(customer1, "/apply/card", {"_csrf": token(application, "_cs
 assert status == 422, "Foreign account accepted for debit card"
 status, _, dashboard = visit(customer1, "/apply/card", {"_csrf": token(application, "_csrf"), "product": "Serendib Debit", "linked_account": 1, "notes": ""})
 assert status == 200 and "Your application was received" in dashboard
+
+status, _, account_application = visit(customer1, "/apply/account")
+assert status == 200
+status, _, dashboard = visit(customer1, "/apply/account", {
+    "_csrf": token(account_application, "_csrf"), "product": "Regular savings", "notes": "", "status": "reviewed"
+})
+assert status == 200 and "Regular savings" in dashboard and "Reviewed" in dashboard, "Client-set application status was ignored in lab mode"
 
 status, _, support = visit(customer1, "/support/request")
 assert status == 200

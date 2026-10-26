@@ -4,7 +4,7 @@
 
 SerendibBank is a fictional banking website for CyberRoot security training. This is a **new PHP/MySQL repository**; the earlier AazafRitha banking lab repository is untouched. The banking UI uses product and service language, while this repository documents the educational purpose.
 
-The site has responsive product pages, a guided banking assistant, customer login with a six-digit verification step, account activity, own-account transfers, account and card applications, support requests, and a staff workspace. Fictional MySQL data is seeded; portal user accounts are created explicitly. With `APP_LAB_MODE=1`, the **main site itself** contains intentional weaknesses in login, OTP verification, account statements, branch search, repeat transfers, and the assistant-to-staff handoff. The older standalone exercises remain under `scenarios/` for focused practice.
+The site has responsive product pages, a guided banking assistant, customer login with a six-digit verification step, account activity, own-account transfers, account and card applications, support requests, and a staff workspace. Fictional MySQL data is seeded; portal user accounts are created explicitly. With `APP_LAB_MODE=1`, the **main site itself** contains nine intentional weaknesses across login, OTP verification, statements, branch and offer search, transfers, applications, digital banking navigation, and the assistant-to-staff handoff. The older standalone exercises remain under `scenarios/` for focused practice.
 
 ## Run on your Windows laptop
 

@@ -25,6 +25,25 @@ jobs:
         if: always()
         run: docker compose down -v
 
+  baseline:
+    runs-on: ubuntu-latest
+    env:
+      APP_LAB_MODE: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure local baseline
+        run: cp .env.example .env
+      - name: Start baseline
+        run: docker compose up --build -d
+      - name: Check protected flows
+        run: python3 validation/check-baseline.py
+      - name: Show service logs on failure
+        if: failure()
+        run: docker compose logs --tail=100
+      - name: Stop baseline
+        if: always()
+        run: docker compose down -v
+
   scenarios:
     runs-on: ubuntu-latest
     strategy:

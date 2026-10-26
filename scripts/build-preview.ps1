@@ -23,6 +23,8 @@ foreach ($page in $pages) {
     $html = $html.Replace('href="/support/request"', 'href="support.html"')
     $html = $html.Replace('href="/transfer"', 'href="accounts.html"')
     $html = $html.Replace('href="/chat/transcript"', 'href="support.html"')
+    $html = $html.Replace('href="/digital/continue?next=/login"', 'href="login.html"')
+    $html = $html.Replace('action="/offers/search"', 'action="offers.html"')
     $html = $html.Replace('href="/"', 'href="home.html"')
 
     Set-Content -LiteralPath (Join-Path $project "design\$page.html") -Value ($html.TrimEnd() + "`n") -Encoding utf8 -NoNewline

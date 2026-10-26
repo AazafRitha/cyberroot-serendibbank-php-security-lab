@@ -31,7 +31,7 @@ try {
 } catch (PDOException $exception) {
     error_log((string) $exception);
     http_response_code(503);
-    View::render('error', ['title' => 'Service unavailable', 'message' => 'The demo database is unavailable.']);
+    View::render('error', ['title' => 'Service unavailable', 'message' => 'Account information is temporarily unavailable.']);
 } catch (Throwable $exception) {
     error_log((string) $exception);
     http_response_code(500);

@@ -24,15 +24,15 @@ CREATE TABLE transactions (
 );
 
 INSERT INTO customers (id, display_name) VALUES
-    (1, 'Demo Customer');
+    (1, 'N. Perera');
 
 INSERT INTO accounts (id, customer_id, account_number, account_type, currency, balance) VALUES
-    (1, 1, 'SB-DEMO-00124', 'Everyday account', 'LKR', 184250.75),
-    (2, 1, 'SB-DEMO-00881', 'Savings account', 'LKR', 520000.00);
+    (1, 1, '241000128453', 'Everyday account', 'LKR', 184250.75),
+    (2, 1, '241000128454', 'Savings account', 'LKR', 520000.00);
 
 INSERT INTO transactions (account_id, posted_at, description, amount) VALUES
-    (1, '2026-10-22 09:15:00', 'Sample salary deposit', 125000.00),
-    (1, '2026-10-20 14:38:00', 'Sample grocery purchase', -6850.50),
-    (1, '2026-10-18 11:20:00', 'Sample utility payment', -4300.00),
-    (2, '2026-10-16 10:00:00', 'Sample savings transfer', 25000.00),
-    (1, '2026-10-15 16:42:00', 'Sample transport purchase', -1850.00);
+    (1, '2026-10-22 09:15:00', 'Salary payment', 125000.00),
+    (1, '2026-10-20 14:38:00', 'Grocery purchase', -6850.50),
+    (1, '2026-10-18 11:20:00', 'Electricity payment', -4300.00),
+    (2, '2026-10-16 10:00:00', 'Transfer to savings', 25000.00),
+    (1, '2026-10-15 16:42:00', 'Transport purchase', -1850.00);

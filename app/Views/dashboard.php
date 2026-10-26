@@ -1,10 +1,10 @@
 <section class="page-heading">
     <div>
-        <div class="eyebrow">Fictional customer · read-only demo</div>
+        <div class="eyebrow">Personal banking</div>
         <h1>Account overview</h1>
-        <p>Sample balances and activity from the local MySQL database.</p>
+        <p>Balances and recent activity in one place.</p>
     </div>
-    <span class="status-pill">Lab environment</span>
+    <span class="status-pill"><?= count($data['accounts']) ?> accounts</span>
 </section>
 
 <section aria-labelledby="accounts-title">

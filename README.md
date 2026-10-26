@@ -2,7 +2,7 @@
 
 SerendibBank is a fictional banking demo for CyberRoot security training. This is a **new PHP/MySQL project** with its own Git history. It does not replace the earlier React/Node repository.
 
-The starter app contains a read-only account dashboard backed by fake MySQL data. There is no login, money movement, or real customer information. Security exercises belong in separate scenario folders and container stacks.
+The starter app contains a read-only account dashboard backed by fictional MySQL data. The public-facing pages are written as a banking site; the project purpose is documented here. There is no login, money movement, or real customer information yet. Security exercises belong in separate scenario folders and container stacks.
 
 ## What is included
 
@@ -12,16 +12,16 @@ The starter app contains a read-only account dashboard backed by fake MySQL data
 - Prepared PDO queries and escaped HTML in the core demo
 - An isolated scenario template for future PHP advisories or application flaws
 
-## Run locally
+## Learn Docker and run locally
 
-Install Docker Desktop or another Docker Compose-compatible runtime. From this folder:
+Start with the [Windows Docker walkthrough](docs/docker-on-windows.md), which covers WSL 2, Docker Desktop, the first run, and troubleshooting. From this folder, after Docker Desktop is running:
 
 ```powershell
 Copy-Item .env.example .env
 docker compose up --build -d
 ```
 
-Open <http://localhost:8080> and select **Demo dashboard**. To change the web port, edit `APP_PORT` in `.env`.
+Open <http://localhost:8080> and select **View accounts**. To change the web port, edit `APP_PORT` in `.env`.
 
 Stop the lab with `docker compose down`. This keeps the MySQL volume. `docker compose down -v` also removes the fictional database so it can be initialized again on the next run.
 
@@ -58,6 +58,10 @@ git push -u origin main
 ```
 
 GitHub may ask you to authenticate. These commands target the new URL only. See [docs/git-workflow.md](docs/git-workflow.md) for the ongoing workflow.
+
+## Public VM plan
+
+The local Compose stack is not a public deployment. The current accounts page reads one fixed customer record without authentication. Before exposing the site, implement separate learner accounts and follow the [public VM plan](docs/public-vm-plan.md). The banking UI contains no lab or demo wording; the repository and program scope documents describe its educational use.
 
 ## Security lab boundary
 

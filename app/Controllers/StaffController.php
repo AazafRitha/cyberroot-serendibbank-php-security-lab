@@ -8,6 +8,7 @@ use CyberRoot\SerendibBank\Core\Auth;
 use CyberRoot\SerendibBank\Core\Database;
 use CyberRoot\SerendibBank\Core\View;
 use CyberRoot\SerendibBank\Models\Portal;
+use CyberRoot\SerendibBank\Models\ContactRequests;
 
 final class StaffController
 {
@@ -32,6 +33,7 @@ final class StaffController
             'flash' => is_string($flash) ? $flash : null,
             'applications' => $portal->staffApplications(),
             'supportRequests' => $requests,
+            'contactRequests' => (new ContactRequests(Database::connect()))->recent(),
         ]);
     }
 
@@ -43,6 +45,27 @@ final class StaffController
     public function resolveSupport(): void
     {
         $this->update('support');
+    }
+
+    public function resolveContact(): void
+    {
+        if (Auth::requireRole('staff') === null) {
+            return;
+        }
+        if (!Auth::verifyCsrf($_POST['_csrf'] ?? null)) {
+            http_response_code(400);
+            View::render('error', ['title' => 'Please try again', 'message' => 'Reload the workspace and try again.']);
+            return;
+        }
+        $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
+        if (!$id || $id < 1) {
+            http_response_code(422);
+            View::render('error', ['title' => 'Invalid request', 'message' => 'Select a valid enquiry.']);
+            return;
+        }
+        $updated = (new ContactRequests(Database::connect()))->resolve($id);
+        $_SESSION['flash_success'] = $updated ? 'Enquiry resolved.' : 'This enquiry was already updated.';
+        header('Location: /staff', true, 303);
     }
 
     private function update(string $kind): void

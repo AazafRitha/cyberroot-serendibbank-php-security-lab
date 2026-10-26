@@ -1,6 +1,7 @@
 services:
   web:
     build: .
+    command: ["sh", "-c", "php scripts/migrate.php && exec apache2-foreground"]
     ports:
       - "127.0.0.1:${APP_PORT:-8080}:80"
     environment:

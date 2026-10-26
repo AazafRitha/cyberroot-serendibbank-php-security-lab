@@ -2,7 +2,9 @@
 
 ![SerendibBank logo](public/assets/logo.svg)
 
-SerendibBank is a PHP and MySQL website with public product pages, product information documents, and an online banking portal. It includes customer sign in, verification, account activity, transfers, account and card applications, support requests with attachments, a digital assistant, and a staff workspace. The layout works across desktop and mobile screens.
+SerendibBank is a PHP and MySQL website with public product pages, product information documents, a savings calculator, branch map, general enquiry form, and an online banking portal. It includes customer sign in, verification, account activity, transfers, account and card applications, support requests with attachments, a digital assistant, and a staff workspace. The layout works across desktop and mobile screens.
+
+This repository is for authorized security learning. See the [security testing guide](docs/security-testing-guide.md) for the finding inventory and validation steps. The site itself presents normal banking journeys.
 
 ## Run locally
 
@@ -42,6 +44,6 @@ tests/     Basic portal workflow checks
 docs/      Setup, architecture, and Git workflow
 ```
 
-The [architecture notes](docs/architecture.md) describe the application structure. The [Git workflow](docs/git-workflow.md) covers local changes and pushing them to GitHub. `.env`, generated passwords, and customer records belong outside Git.
+The [architecture notes](docs/architecture.md) describe the application structure. The [Git workflow](docs/git-workflow.md) covers local changes and pushing them to GitHub. SQL files in `database/migrations/` are applied when the web container starts, including on an existing database volume. `.env`, generated passwords, and customer records belong outside Git.
 
 The included Compose file binds the website to `127.0.0.1` for local development. A public server needs a separate deployment configuration, TLS, operational monitoring, backups, and a real verification delivery service.

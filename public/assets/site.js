@@ -36,6 +36,26 @@ document.querySelectorAll('[data-filter-group]').forEach((group) => {
   if (search) search.addEventListener('input', update);
 });
 
+const mapFrame = document.querySelector('[data-location-map]');
+if (mapFrame) {
+  const title = document.querySelector('[data-map-title]');
+  const largerMap = document.querySelector('[data-map-link]');
+  document.querySelectorAll('[data-map-location]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const lat = Number(button.dataset.mapLat);
+      const lon = Number(button.dataset.mapLon);
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) return;
+      const bbox = [lon - 0.02, lat - 0.02, lon + 0.02, lat + 0.02].map((n) => n.toFixed(4)).join(',');
+      const name = button.dataset.mapLocation || 'Selected location';
+      title.textContent = name;
+      mapFrame.title = `Map of the ${name} area`;
+      mapFrame.src = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${encodeURIComponent(`${lat},${lon}`)}`;
+      largerMap.href = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=14/${lat}/${lon}`;
+      document.querySelector('#location-map').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
 const cardProduct = document.querySelector('[data-card-product]');
 if (cardProduct) {
   const debitFields = document.querySelector('[data-debit-fields]');

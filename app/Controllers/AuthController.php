@@ -42,9 +42,27 @@ final class AuthController
         }
 
         $users = new User(Database::connect());
+        $source = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $ip = trim(explode(',', (string) $source)[0]);
+        if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
+            $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+        }
+        $cooldown = $users->cooldownSeconds($ip);
+        if ($cooldown > 0) {
+            header('Retry-After: ' . $cooldown);
+            http_response_code(429);
+            View::render('login', [
+                'title' => 'Sign in | SerendibBank',
+                'error' => 'Too many sign-in attempts. Please wait for the timer before trying again.',
+                'email' => $email,
+                'retrySeconds' => $cooldown,
+            ]);
+            return;
+        }
         $user = $users->findByEmail($email);
         $valid = $user !== false && password_verify($password, (string) $user['password_hash']);
         if (!$valid) {
+            $users->recordFailedLogin($ip);
             if ($user === false) {
                 password_verify($password, password_hash('placeholder-password', PASSWORD_BCRYPT));
             }
@@ -107,7 +125,6 @@ final class AuthController
             header('Location: /login', true, 303);
             return;
         }
-        $users->clearEmailAttempts((string) $pending['email']);
         $users->markSignedIn((int) $user['id']);
         OtpOutbox::clear((string) $pending['email']);
         $afterLogin = $_SESSION['after_login'] ?? '/dashboard';

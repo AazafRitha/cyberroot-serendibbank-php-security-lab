@@ -2,6 +2,7 @@
     <section class="auth-intro"><div class="auth-intro-inner"><span class="eyebrow eyebrow-light">SerendibBank online</span><h1>Welcome<br><em>back.</em></h1><p>Your accounts, activity and next steps in one secure place.</p><div class="auth-intro-rule"></div><small>Banking for what matters next.</small></div></section>
     <section class="auth-form-wrap" aria-labelledby="login-title"><div class="auth-form-inner"><span class="eyebrow">Online banking</span><h2 id="login-title">Sign in to your account</h2><p>Enter your email address and password to continue.</p>
         <?php if (!empty($data['error'])): ?><div class="form-error" role="alert"><?= $escape($data['error']) ?></div><?php endif; ?>
+        <?php if (!empty($data['retrySeconds'])): ?><p class="login-cooldown" data-login-cooldown="<?= $escape($data['retrySeconds']) ?>" role="status">Try again in <strong data-login-cooldown-time><?= $escape((int) ceil($data['retrySeconds'] / 60)) ?> minutes</strong>.</p><?php endif; ?>
         <form method="post" action="/login" class="bank-form">
             <input type="hidden" name="_csrf" value="<?= $escape($data['csrfToken']) ?>">
             <label for="login-email">Email address</label><input id="login-email" name="email" type="email" autocomplete="username" maxlength="190" required value="<?= $escape($data['email'] ?? '') ?>">

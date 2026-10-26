@@ -47,7 +47,7 @@ final class ChatController
         $_SESSION['chat_times'] = $recent;
 
         $message = trim($message);
-        $answer = $this->answer(strtolower($message));
+        $answer = $this->answer($message);
         $history = $_SESSION['chat_history'] ?? [];
         $history[] = ['role' => 'customer', 'text' => $message];
         $history[] = ['role' => 'assistant', 'text' => $answer['text'], 'action' => $answer['action']];
@@ -96,6 +96,16 @@ final class ChatController
     /** @return array{text: string, action: array{label: string, url: string}} */
     private function answer(string $message): array
     {
+        $instruction = preg_match('/(?:ignore|forget|override|discard).{0,100}(?:instructions|rules|guidance|system)/is', $message) === 1;
+        $disclosure = preg_match('/(?:show|print|reveal|repeat|quote|send).{0,100}(?:brief|instructions|policy|guidance|prompt)/is', $message) === 1;
+        if ($instruction && $disclosure) {
+            $brief = file_get_contents(dirname(__DIR__) . '/Content/assistant-brief.txt');
+            return [
+                'text' => is_string($brief) ? trim($brief) : 'Please contact our support team for help.',
+                'action' => ['label' => 'Visit help centre', 'url' => '/support'],
+            ];
+        }
+        $message = strtolower($message);
         if ($this->has($message, ['lost card', 'stolen card', 'fraud', 'suspicious', 'unauthorised', 'unauthorized'])) {
             return ['text' => 'If your card is lost or you notice an unfamiliar transaction, contact us through a verified channel promptly. Never share your PIN, password or one-time code in chat.', 'action' => ['label' => 'Get card support', 'url' => '/support']];
         }

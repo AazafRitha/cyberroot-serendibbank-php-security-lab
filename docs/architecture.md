@@ -6,4 +6,4 @@ The MySQL schema contains customers, portal users, accounts, transactions, trans
 
 The Compose stack starts PHP/Apache and MySQL. The web service binds to localhost; MySQL is available only inside the Compose network. Database data and the verification outbox are stored in named Docker volumes.
 
-The site includes a customer dashboard, account statements, transfers, product applications, support requests, a staff workspace, and JSON endpoints under `/api/v1/` for account activity, request details, application processing, and beneficiary lookup.
+The site includes a customer dashboard, account statements, transfers, product applications, support requests with attachments, a staff workspace, and JSON endpoints under `/api/v1/` for account activity, request details, application processing, beneficiary lookup, and quick transfers.

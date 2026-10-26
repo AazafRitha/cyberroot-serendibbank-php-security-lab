@@ -13,6 +13,7 @@ services:
     volumes:
       - ./:/var/www/html
       - otp_outbox:/var/www/html/var/otp
+      - support_uploads:/var/www/html/public/uploads
     depends_on:
       db:
         condition: service_healthy
@@ -41,6 +42,7 @@ services:
 volumes:
   db_data:
   otp_outbox:
+  support_uploads:
 
 networks:
   frontend: {}

@@ -41,9 +41,43 @@ final class SupportController
             return;
         }
 
-        (new Portal(Database::connect()))->createSupportRequest(
-            (int) $user['customer_id'], $category, trim($subject), trim($message)
-        );
+        $attachment = $_FILES['attachment'] ?? null;
+        $hasAttachment = is_array($attachment) && ($attachment['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
+        $extension = '';
+        if ($hasAttachment) {
+            $filename = $attachment['name'] ?? null;
+            $size = $attachment['size'] ?? null;
+            $extension = is_string($filename) ? strtolower((string) pathinfo($filename, PATHINFO_EXTENSION)) : '';
+            if (($attachment['error'] ?? null) !== UPLOAD_ERR_OK || !is_int($size) || $size > 2_000_000 ||
+                !in_array($extension, ['png', 'jpg', 'jpeg', 'pdf', 'svg'], true)) {
+                http_response_code(422);
+                $this->render('Choose a PNG, JPG or PDF attachment under 2 MB.');
+                return;
+            }
+        }
+
+        $pdo = Database::connect();
+        $pdo->beginTransaction();
+        try {
+            $id = (new Portal($pdo))->createSupportRequest(
+                (int) $user['customer_id'], $category, trim($subject), trim($message)
+            );
+            if ($hasAttachment) {
+                $path = dirname(__DIR__, 2) . '/public/uploads/request-' . $id . '-' . bin2hex(random_bytes(8)) . '.' . $extension;
+                if (!move_uploaded_file((string) $attachment['tmp_name'], $path)) {
+                    throw new \RuntimeException('Attachment could not be saved.');
+                }
+            }
+            $pdo->commit();
+        } catch (\Throwable $exception) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            error_log((string) $exception);
+            http_response_code(503);
+            $this->render('Your message could not be sent. Please try again.');
+            return;
+        }
         $_SESSION['flash_success'] = 'Your message was received. You can follow its status here.';
         header('Location: /dashboard', true, 303);
     }

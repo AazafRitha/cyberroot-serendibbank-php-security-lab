@@ -7,6 +7,8 @@ namespace CyberRoot\SerendibBank\Controllers;
 use CyberRoot\SerendibBank\Core\Auth;
 use CyberRoot\SerendibBank\Core\Database;
 use CyberRoot\SerendibBank\Models\Portal;
+use CyberRoot\SerendibBank\Models\Account;
+use DomainException;
 
 final class ApiController
 {
@@ -98,6 +100,34 @@ final class ApiController
         $statement->execute([$accountNumber]);
         $beneficiary = $statement->fetch();
         $this->json($beneficiary === false ? ['error' => 'Account not found.'] : ['beneficiary' => $beneficiary], $beneficiary === false ? 404 : 200);
+    }
+
+    public function quickTransfer(): void
+    {
+        $user = $this->customer();
+        if ($user === null) {
+            return;
+        }
+        $input = json_decode((string) file_get_contents('php://input'), true);
+        if (!is_array($input)) {
+            $this->json(['error' => 'Send a JSON request.'], 400);
+            return;
+        }
+        $from = filter_var($input['from_account'] ?? null, FILTER_VALIDATE_INT);
+        $to = filter_var($input['to_account'] ?? null, FILTER_VALIDATE_INT);
+        $amount = $input['amount'] ?? null;
+        if (!$from || !$to || $from === $to || !is_string($amount) ||
+            !preg_match('/^-?\d{1,7}(?:\.\d{1,2})?$/D', $amount) ||
+            (float) $amount === 0.0 || abs((float) $amount) > 1000000) {
+            $this->json(['error' => 'Check the accounts and amount.'], 422);
+            return;
+        }
+        try {
+            $reference = (new Account(Database::connect()))->quickTransfer((int) $user['customer_id'], $from, $to, $amount);
+            $this->json(['reference' => $reference, 'status' => 'completed']);
+        } catch (DomainException $exception) {
+            $this->json(['error' => $exception->getMessage()], 422);
+        }
     }
 
     /** @return array<string, mixed>|null */

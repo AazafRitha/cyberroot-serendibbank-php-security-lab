@@ -29,12 +29,13 @@ final class Portal
         $statement->execute([$customerId, $kind, $product, $linkedAccountId, $employment, $income, $notes, $status]);
     }
 
-    public function createSupportRequest(int $customerId, string $category, string $subject, string $message): void
+    public function createSupportRequest(int $customerId, string $category, string $subject, string $message): int
     {
         $statement = $this->pdo->prepare(
             'INSERT INTO support_requests (customer_id, category, subject, message) VALUES (?, ?, ?, ?)'
         );
         $statement->execute([$customerId, $category, $subject, $message]);
+        return (int) $this->pdo->lastInsertId();
     }
 
     /** @return array<int, array<string, mixed>> */

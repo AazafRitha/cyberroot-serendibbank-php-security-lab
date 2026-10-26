@@ -70,3 +70,21 @@ if (lookupForm) {
     }
   });
 }
+
+const cooldown = document.querySelector('[data-login-cooldown]');
+if (cooldown) {
+  let remaining = Number(cooldown.dataset.loginCooldown) || 0;
+  const time = cooldown.querySelector('[data-login-cooldown-time]');
+  const update = () => {
+    const minutes = Math.floor(remaining / 60);
+    const seconds = String(remaining % 60).padStart(2, '0');
+    time.textContent = `${minutes}:${seconds}`;
+    if (remaining <= 0) {
+      clearInterval(timer);
+      cooldown.textContent = 'You can try signing in again.';
+    }
+    remaining = Math.max(0, remaining - 1);
+  };
+  const timer = setInterval(update, 1000);
+  update();
+}

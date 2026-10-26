@@ -20,12 +20,18 @@ final class StaffController
         $portal = new Portal(Database::connect());
         $flash = $_SESSION['flash_success'] ?? null;
         unset($_SESSION['flash_success']);
+        $requests = $portal->staffSupportRequests();
+        foreach ($requests as &$request) {
+            $matches = glob(dirname(__DIR__, 2) . '/public/uploads/request-' . (int) $request['id'] . '-*');
+            $request['attachment_url'] = $matches ? '/uploads/' . rawurlencode(basename($matches[0])) : null;
+        }
+        unset($request);
         View::render('staff-dashboard', [
             'title' => 'Service workspace | SerendibBank',
             'name' => $user['name'],
             'flash' => is_string($flash) ? $flash : null,
             'applications' => $portal->staffApplications(),
-            'supportRequests' => $portal->staffSupportRequests(),
+            'supportRequests' => $requests,
         ]);
     }
 

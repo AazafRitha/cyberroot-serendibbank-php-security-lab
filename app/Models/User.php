@@ -22,33 +22,26 @@ final class User
         return $statement->fetch();
     }
 
-    public function isRateLimited(string $email, string $ip): bool
+    public function cooldownSeconds(string $ip): int
     {
         $statement = $this->pdo->prepare(
-            'SELECT COUNT(*) FROM login_attempts
-             WHERE attempt_key = :attempt_key AND attempted_at >= UTC_TIMESTAMP() - INTERVAL 15 MINUTE'
+            'SELECT attempted_at FROM login_attempts
+             WHERE attempt_key = :attempt_key AND attempted_at >= UTC_TIMESTAMP() - INTERVAL 15 MINUTE
+             ORDER BY attempted_at DESC LIMIT 5'
         );
-        foreach ([['mail:' . $email, 5], ['ip:' . $ip, 25]] as [$value, $limit]) {
-            $statement->execute(['attempt_key' => hash('sha256', $value)]);
-            if ((int) $statement->fetchColumn() >= $limit) {
-                return true;
-            }
+        $statement->execute(['attempt_key' => hash('sha256', 'ip:' . $ip)]);
+        $attempts = $statement->fetchAll(PDO::FETCH_COLUMN);
+        if (count($attempts) < 5) {
+            return 0;
         }
-        return false;
+        $oldest = strtotime((string) end($attempts) . ' UTC');
+        return $oldest === false ? 900 : max(1, $oldest + 900 - time());
     }
 
-    public function recordFailedLogin(string $email, string $ip): void
+    public function recordFailedLogin(string $ip): void
     {
         $statement = $this->pdo->prepare('INSERT INTO login_attempts (attempt_key) VALUES (:attempt_key)');
-        foreach (['mail:' . $email, 'ip:' . $ip] as $value) {
-            $statement->execute(['attempt_key' => hash('sha256', $value)]);
-        }
-    }
-
-    public function clearEmailAttempts(string $email): void
-    {
-        $statement = $this->pdo->prepare('DELETE FROM login_attempts WHERE attempt_key = :attempt_key');
-        $statement->execute(['attempt_key' => hash('sha256', 'mail:' . $email)]);
+        $statement->execute(['attempt_key' => hash('sha256', 'ip:' . $ip)]);
     }
 
     public function markSignedIn(int $userId): void

@@ -22,6 +22,7 @@
 .form-aside strong{font-size:.8rem}.form-aside p{color:var(--muted);font-size:.78rem;line-height:1.6}
 .form-error,.form-success{padding:14px 17px;margin:15px 0 20px;border-left:3px solid #9c304c;background:#fbeaec;color:#6b1e35;font-size:.82rem;font-weight:700}
 .form-success{border-color:#527358;background:#edf5ea;color:#255134}
+.login-cooldown{padding:10px 0;color:var(--burgundy);font-size:.8rem;font-weight:700}
 .field-help{color:var(--muted);font-size:.72rem;line-height:1.55;margin:0}
 .label-optional{color:var(--muted);font-weight:400}
 .portal-shell{padding-bottom:90px}

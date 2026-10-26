@@ -44,7 +44,7 @@ Run `Copy-Item` only the first time; do not overwrite your existing `.env` later
 
 Docker Compose reads `compose.yaml`: it builds the PHP/Apache **web** container, starts the MySQL **db** container, creates a private network for the database, and creates a named volume that keeps database data after containers stop. The website's port is available only at `127.0.0.1` on this laptop.
 
-The public site works immediately. To use online banking, create fictional customer and staff logins with the commands in the [README](../README.md#run-on-your-windows-laptop). Save their generated passwords securely outside the repository, then open <http://localhost:8080/login>.
+The public site works immediately. To use online banking, create customer and staff logins with the commands in the [README](../README.md#run-locally). Save their generated passwords securely outside the repository, then open <http://localhost:8080/login>.
 
 ## 4. Everyday commands
 

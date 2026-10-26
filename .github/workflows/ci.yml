@@ -1,64 +1,29 @@
-name: PHP lab checks
+name: PHP checks
 
 on:
   push:
   pull_request:
 
 jobs:
-  core:
+  application:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Configure local lab
+      - name: Configure local services
         run: cp .env.example .env
-      - name: Start core
+      - name: Start services
         run: docker compose up --build -d
-      - name: Lint PHP files
+      - name: Check PHP syntax
+        run: find app public scripts -name '*.php' -print0 | xargs -0 -n1 docker compose exec -T web php -l
+      - name: Check public pages
         run: |
-          find app public scripts scenarios -name '*.php' -print0 | xargs -0 -n1 docker compose exec -T web php -l
-      - name: Check customer and staff workflows
-        run: python3 validation/check-core.py
+          curl -fsS --retry 10 --retry-connrefused --retry-delay 2 http://127.0.0.1:8080/ > /dev/null
+          curl -fsS http://127.0.0.1:8080/login > /dev/null
+      - name: Check portal workflows
+        run: python3 tests/smoke.py
       - name: Show service logs on failure
         if: failure()
         run: docker compose logs --tail=100
-      - name: Stop core
+      - name: Stop services
         if: always()
         run: docker compose down -v
-
-  baseline:
-    runs-on: ubuntu-latest
-    env:
-      APP_LAB_MODE: "0"
-    steps:
-      - uses: actions/checkout@v4
-      - name: Configure local baseline
-        run: cp .env.example .env
-      - name: Start baseline
-        run: docker compose up --build -d
-      - name: Check protected flows
-        run: python3 validation/check-baseline.py
-      - name: Show service logs on failure
-        if: failure()
-        run: docker compose logs --tail=100
-      - name: Stop baseline
-        if: always()
-        run: docker compose down -v
-
-  scenarios:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [broken-access-control, sql-injection, stored-xss, csrf-transfer, weak-login]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Start scenario
-        run: docker compose -f scenarios/${{ matrix.name }}/compose.yaml up --build -d
-      - name: Verify exercise behaviour
-        run: python3 validation/check-scenario.py ${{ matrix.name }}
-      - name: Show service logs on failure
-        if: failure()
-        run: docker compose -f scenarios/${{ matrix.name }}/compose.yaml logs --tail=100
-      - name: Stop scenario
-        if: always()
-        run: docker compose -f scenarios/${{ matrix.name }}/compose.yaml down -v

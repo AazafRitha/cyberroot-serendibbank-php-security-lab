@@ -1,21 +1,12 @@
 # Git workflow
 
-This project has its own `main` branch and points to the new `AazafRitha/cyberroot-serendibbank-php-security-lab` repository. Keep the earlier banking lab repository untouched.
-
-For each feature or security exercise:
+Open the repository folder in VS Code and use its Source Control panel or PowerShell. For each change:
 
 ```powershell
-git switch main
-git pull --ff-only
-git switch -c feature/short-description
-```
-
-Make a focused change, review it with `git diff`, then commit:
-
-```powershell
+git status
 git add .
-git commit -m "Add short description"
-git push -u origin feature/short-description
+git commit -m "Describe the change"
+git push
 ```
 
-Open a pull request into `main`, review the code and scenario boundary, then merge. Keep `.env`, real secrets, generated dependencies, and database data out of commits. The old `serendibbank-banking-security-lab` repository is unrelated and has no remote configured here.
+Review the changed files before committing. Keep `.env`, generated passwords, database files, and personal information out of commits. Use a branch and pull request when you want to review a change before it reaches `main`.

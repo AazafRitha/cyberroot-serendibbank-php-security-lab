@@ -12,7 +12,7 @@ final class Database
     {
         $host = getenv('DB_HOST') ?: 'db';
         $port = getenv('DB_PORT') ?: '3306';
-        $name = getenv('DB_NAME') ?: 'serendibbank_lab';
+        $name = getenv('DB_NAME') ?: 'serendibbank';
         $user = getenv('DB_USER') ?: 'serendibbank';
         $password = getenv('DB_PASSWORD');
 

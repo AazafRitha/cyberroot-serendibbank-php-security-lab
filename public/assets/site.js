@@ -51,3 +51,22 @@ if (cardProduct) {
   cardProduct.addEventListener('change', updateCardFields);
   updateCardFields();
 }
+
+const lookupForm = document.querySelector('[data-account-lookup]');
+if (lookupForm) {
+  const result = document.querySelector('[data-account-lookup-result]');
+  lookupForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const accountNumber = new FormData(lookupForm).get('account_number');
+    result.textContent = 'Checking account…';
+    try {
+      const response = await fetch(`/api/v1/beneficiaries/lookup?account_number=${encodeURIComponent(accountNumber)}`);
+      const payload = await response.json();
+      result.textContent = response.ok
+        ? `${payload.beneficiary.account_holder} · ${payload.beneficiary.account_type} · ${payload.beneficiary.currency}`
+        : payload.error || 'Account could not be found.';
+    } catch {
+      result.textContent = 'Account lookup is temporarily unavailable.';
+    }
+  });
+}

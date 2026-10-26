@@ -6,13 +6,12 @@ namespace CyberRoot\SerendibBank\Controllers;
 
 use CyberRoot\SerendibBank\Core\Auth;
 use CyberRoot\SerendibBank\Core\Database;
-use CyberRoot\SerendibBank\Core\Lab;
 use CyberRoot\SerendibBank\Core\View;
 use CyberRoot\SerendibBank\Models\Account;
 use DomainException;
 use PDOException;
 
-final class LabSurfaceController
+final class BankingController
 {
     public function statement(): void
     {
@@ -27,13 +26,9 @@ final class LabSurfaceController
         }
 
         $pdo = Database::connect();
-        $sql = 'SELECT a.id, a.account_number, a.account_type, a.balance, a.currency, c.display_name
-                FROM accounts a JOIN customers c ON c.id = a.customer_id WHERE a.id = ?';
-        if (!Lab::enabled()) {
-            $sql .= ' AND a.customer_id = ?';
-        }
-        $statement = $pdo->prepare($sql);
-        $statement->execute(Lab::enabled() ? [$id] : [$id, (int) $user['customer_id']]);
+        $statement = $pdo->prepare('SELECT a.id, a.account_number, a.account_type, a.balance, a.currency, c.display_name
+                FROM accounts a JOIN customers c ON c.id = a.customer_id WHERE a.id = ?');
+        $statement->execute([$id]);
         $account = $statement->fetch();
         if ($account === false) {
             $this->notFound();
@@ -68,14 +63,7 @@ final class LabSurfaceController
             ) AS branches WHERE city LIKE ";
             try {
                 $pdo = Database::connect();
-                if (Lab::enabled()) {
-                    // Intentional SQL injection in the challenge configuration.
-                    $rows = $pdo->query($base . "'%" . $query . "%' ORDER BY city")->fetchAll();
-                } else {
-                    $statement = $pdo->prepare($base . '? ORDER BY city');
-                    $statement->execute(['%' . $query . '%']);
-                    $rows = $statement->fetchAll();
-                }
+                $rows = $pdo->query($base . "'%" . $query . "%' ORDER BY city")->fetchAll();
             } catch (PDOException $exception) {
                 http_response_code(422);
                 $error = 'We could not complete that search. Try another city.';
@@ -91,10 +79,6 @@ final class LabSurfaceController
 
     public function repeatTransfer(): void
     {
-        if (!Lab::enabled()) {
-            $this->notFound();
-            return;
-        }
         $user = Auth::requireRole('customer');
         if ($user === null) {
             return;

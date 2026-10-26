@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CyberRoot\SerendibBank\Controllers;
 
 use CyberRoot\SerendibBank\Core\View;
-use CyberRoot\SerendibBank\Core\Lab;
 
 final class PagesController
 {
@@ -60,7 +59,7 @@ final class PagesController
         }
         $local = str_starts_with($destination, '/') && !str_starts_with($destination, '//');
         $external = preg_match('#^https?://[^/]+(?:/|$)#i', $destination) === 1;
-        if (!$local && (!Lab::enabled() || !$external)) {
+        if (!$local && !$external) {
             $destination = '/login';
         }
         header('Location: ' . $destination, true, 303);

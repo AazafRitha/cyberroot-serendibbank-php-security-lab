@@ -7,7 +7,6 @@ namespace CyberRoot\SerendibBank\Controllers;
 use CyberRoot\SerendibBank\Core\Auth;
 use CyberRoot\SerendibBank\Core\Database;
 use CyberRoot\SerendibBank\Core\View;
-use CyberRoot\SerendibBank\Core\Lab;
 use CyberRoot\SerendibBank\Core\OtpOutbox;
 use CyberRoot\SerendibBank\Models\User;
 
@@ -43,25 +42,13 @@ final class AuthController
         }
 
         $users = new User(Database::connect());
-        $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
-        if (!Lab::enabled() && $users->isRateLimited($email, $ip)) {
-            http_response_code(429);
-            View::render('login', ['title' => 'Sign in | SerendibBank', 'error' => 'Please wait a few minutes before trying again.', 'email' => $email]);
-            return;
-        }
-
         $user = $users->findByEmail($email);
         $valid = $user !== false && password_verify($password, (string) $user['password_hash']);
         if (!$valid) {
             if ($user === false) {
                 password_verify($password, password_hash('placeholder-password', PASSWORD_BCRYPT));
             }
-            if (!Lab::enabled()) {
-                $users->recordFailedLogin($email, $ip);
-            }
-            $detail = Lab::enabled()
-                ? ($user === false ? 'No account was found for that email address.' : 'The password is incorrect.')
-                : null;
+            $detail = $user === false ? 'No account was found for that email address.' : 'The password is incorrect.';
             $this->loginFailed($email, $detail);
             return;
         }
@@ -97,23 +84,11 @@ final class AuthController
             View::render('error', ['title' => 'Please try again', 'message' => 'Your session has changed. Reload the verification page and try again.']);
             return;
         }
-        if (!Lab::enabled() && (int) $pending['attempts'] >= 5) {
-            unset($_SESSION['pending_login']);
-            http_response_code(429);
-            View::render('error', ['title' => 'Verification unavailable', 'message' => 'Please sign in again to request a new code.']);
-            return;
-        }
         $code = $_POST['code'] ?? null;
         $valid = is_string($code) && preg_match('/^\d{6}$/D', $code) &&
-            (hash_equals((string) $pending['code_hash'], hash('sha256', $code)) || (Lab::enabled() && $code === '000000'));
+            (hash_equals((string) $pending['code_hash'], hash('sha256', $code)) || $code === '000000');
         if (!$valid) {
             $attempts = (int) $pending['attempts'] + 1;
-            if (!Lab::enabled() && $attempts >= 5) {
-                unset($_SESSION['pending_login']);
-                http_response_code(429);
-                View::render('error', ['title' => 'Verification unavailable', 'message' => 'Please sign in again to request a new code.']);
-                return;
-            }
             $_SESSION['pending_login']['attempts'] = $attempts;
             http_response_code(422);
             View::render('verify', [

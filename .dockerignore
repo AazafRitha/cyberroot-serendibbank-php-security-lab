@@ -5,8 +5,6 @@
 .github
 design
 docs
-scenarios
-validation
 __pycache__
 *.pyc
 node_modules

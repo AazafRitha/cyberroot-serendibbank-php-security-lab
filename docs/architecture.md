@@ -1,16 +1,9 @@
-# Architecture
+# Application architecture
 
-```text
-Browser → Apache public/ → front controller → router → controller
-                                               ↘ view  ↔ model → MySQL
-```
+Apache serves `public/` and routes requests to `public/index.php`. A small router connects public pages, customer and staff workflows, and JSON endpoints to controllers in `app/Controllers`. Models in `app/Models` read and update MySQL data through PDO. Views in `app/Views` share the site layout and assets.
 
-`public/` is the only web root. Application classes, setup scripts, documentation, and `.env` remain outside it. The core PHP 8.3 app has public product pages plus a customer portal and staff service workspace. Accounts are scoped to the signed-in customer's ID. Staff can review applications and resolve support requests, but cannot access customer money movement.
+The MySQL schema contains customers, portal users, accounts, transactions, transfers, applications, support requests, and sign-in records. The `scripts/` directory has commands for account provisioning, password reset, reading locally delivered verification codes, and generating the static page preview.
 
-The local Compose stack sets `APP_LAB_MODE=1`. In that mode, the main site intentionally changes nine behaviors: login reveals whether an email exists and skips attempt throttling; OTP verification accepts a fixed bypass code and has no attempt limit; statements omit customer ownership checks; branch search concatenates input into SQL; offer search reflects input as HTML; repeat transfer changes balances on GET; applications trust a client-supplied review status; the digital banking handoff accepts external redirect destinations; and escalated assistant text renders raw in the staff workspace while CSP allows inline scripts. [Main-site validation](../validation/main-site.md) documents each input and expected result. With `APP_LAB_MODE=0`, those deliberate flaws are disabled while the normal banking flows continue.
+The Compose stack starts PHP/Apache and MySQL. The web service binds to localhost; MySQL is available only inside the Compose network. Database data and the verification outbox are stored in named Docker volumes.
 
-Outside those deliberate paths, PHP password hashes, strict cookie sessions, session regeneration, idle and absolute expiry, CSRF checks on ordinary POST forms, HTML escaping, bound PDO queries, and transactional own-account transfers remain. The OTP challenge is bound to a pending session, expires after five minutes, and is consumed after use. Codes are written to a local Docker volume for the operator to retrieve with `scripts/read-otp.php`; there is no email delivery integration yet. This is a fictional training system, not a production banking security reference.
-
-The Docker stack binds HTTP only to host loopback and leaves MySQL on an internal network. `database/init.sql` initializes a fresh named volume with fictional data. Changing that file does **not** migrate an existing volume. Use a migration for retained data; `docker compose down -v` is only for a disposable local database.
-
-The [public VM plan](public-vm-plan.md) lists deployment work. Standalone variants remain under `scenarios/` for focused practice. They use separate localhost stacks and are covered by the [validation matrix](../validation/README.md).
+The site includes a customer dashboard, account statements, transfers, product applications, support requests, a staff workspace, and JSON endpoints under `/api/v1/` for account activity, request details, application processing, and beneficiary lookup.

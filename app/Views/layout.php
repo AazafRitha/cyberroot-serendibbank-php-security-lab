@@ -7,12 +7,12 @@
     <meta name="theme-color" content="#3b1725">
     <title><?= $escape($data['title'] ?? 'SerendibBank') ?></title>
     <script>try { document.documentElement.dataset.theme = localStorage.getItem('serendib-theme') === 'dark' ? 'dark' : 'light'; } catch { document.documentElement.dataset.theme = 'light'; }</script>
-    <link rel="stylesheet" href="/assets/style.css?v=3">
+    <link rel="stylesheet" href="/assets/style.css?v=5">
     <link rel="stylesheet" href="/assets/portal.css">
     <link rel="stylesheet" href="/assets/chat.css?v=2">
-    <link rel="stylesheet" href="/assets/theme.css?v=1">
+    <link rel="stylesheet" href="/assets/theme.css?v=2">
     <link rel="icon" type="image/svg+xml" href="/assets/logo-mark.svg?v=2">
-    <script src="/assets/site.js?v=2" defer></script>
+    <script src="/assets/site.js?v=3" defer></script>
     <script src="/assets/chat.js" defer></script>
 </head>
 <body>
@@ -29,7 +29,8 @@
                 <img class="brand-mark" src="/assets/logo-mark.svg?v=2" alt="" width="43" height="43">
                 <span class="brand-name"><strong>Serendib<span>Bank</span></strong><small>Here for every tomorrow</small></span>
             </a>
-            <nav class="primary-nav" aria-label="Main navigation">
+            <nav class="primary-nav" id="primary-navigation" aria-label="Main navigation">
+                <span class="mobile-nav-heading">Explore SerendibBank</span>
                 <?php
                 $currentPath = parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) ?: '/';
                 $currentPath = $currentPath === '/' ? '/' : rtrim($currentPath, '/');
@@ -57,8 +58,10 @@
                 ?>
                 <a href="<?= $path ?>"<?= $activeNav === $path ? ' aria-current="page"' : '' ?>><?= $label ?></a>
                 <?php endforeach; ?>
+                <a class="mobile-nav-login" href="<?= $data['currentUser'] !== null ? ($data['currentUser']['role'] === 'staff' ? '/staff' : '/dashboard') : '/login' ?>"><?= $data['currentUser'] !== null ? ($data['currentUser']['role'] === 'staff' ? 'Service workspace' : 'My banking') : 'Online banking' ?> <span aria-hidden="true">↗</span></a>
             </nav>
             <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false"><span class="theme-toggle-icon" data-theme-icon aria-hidden="true">☾</span><span class="theme-toggle-label" data-theme-label>Dark mode</span></button>
+            <button class="menu-toggle" type="button" data-menu-toggle aria-controls="primary-navigation" aria-expanded="false" aria-label="Open menu"><span class="menu-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span><span class="menu-toggle-text">Menu</span></button>
             <?php if ($data['currentUser'] !== null): ?><a class="header-login" href="<?= $data['currentUser']['role'] === 'staff' ? '/staff' : '/dashboard' ?>"><?= $data['currentUser']['role'] === 'staff' ? 'Service workspace' : 'My banking' ?> <span aria-hidden="true">↗</span></a><?php else: ?><a class="header-login" href="/login">Online banking <span aria-hidden="true">↗</span></a><?php endif; ?>
         </div>
     </header>

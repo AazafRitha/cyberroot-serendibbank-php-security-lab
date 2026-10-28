@@ -1,3 +1,36 @@
+const menuToggle = document.querySelector('[data-menu-toggle]');
+const primaryNav = document.querySelector('#primary-navigation');
+if (menuToggle && primaryNav) {
+  document.documentElement.classList.add('has-menu');
+  const header = menuToggle.closest('.site-header');
+  const menuMedia = matchMedia('(max-width: 900px)');
+  const setMenuOpen = (open) => {
+    const expanded = menuMedia.matches && open;
+    header.classList.toggle('menu-open', expanded);
+    menuToggle.setAttribute('aria-expanded', String(expanded));
+    menuToggle.setAttribute('aria-label', expanded ? 'Close menu' : 'Open menu');
+    menuToggle.querySelector('.menu-toggle-text').textContent = expanded ? 'Close' : 'Menu';
+    primaryNav.inert = menuMedia.matches && !expanded;
+    if (menuMedia.matches && !expanded) primaryNav.setAttribute('aria-hidden', 'true');
+    else primaryNav.removeAttribute('aria-hidden');
+  };
+  menuToggle.addEventListener('click', () => setMenuOpen(!header.classList.contains('menu-open')));
+  primaryNav.addEventListener('click', (event) => {
+    if (event.target.closest('a')) setMenuOpen(false);
+  });
+  document.addEventListener('click', (event) => {
+    if (header.classList.contains('menu-open') && !header.contains(event.target)) setMenuOpen(false);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && header.classList.contains('menu-open')) {
+      setMenuOpen(false);
+      menuToggle.focus();
+    }
+  });
+  menuMedia.addEventListener('change', () => setMenuOpen(false));
+  setMenuOpen(false);
+}
+
 const themeToggle = document.querySelector('[data-theme-toggle]');
 if (themeToggle) {
   const updateThemeToggle = () => {

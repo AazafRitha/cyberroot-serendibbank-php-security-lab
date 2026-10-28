@@ -14,6 +14,16 @@
 :root[data-theme="dark"] body,
 :root[data-theme="dark"] main { background: #171116; }
 :root[data-theme="dark"] .site-header { background: #211720; border-color: var(--line); }
+:root[data-theme="dark"] .menu-toggle { background: #2b1d27; border-color: #725462; color: #f7eaed; }
+:root[data-theme="dark"] .menu-toggle:hover { border-color: var(--gold); }
+:root[data-theme="dark"] .menu-open .menu-toggle { background: #8a4058; border-color: #a26277; }
+@media(max-width:900px) {
+  :root[data-theme="dark"].has-menu .primary-nav { background: #261b23; border-color: var(--line); border-top-color: var(--gold); }
+  :root[data-theme="dark"].has-menu .primary-nav a:hover,
+  :root[data-theme="dark"].has-menu .primary-nav a:focus-visible,
+  :root[data-theme="dark"].has-menu .primary-nav a[aria-current="page"] { background: #3b2934; }
+  :root[data-theme="dark"].has-menu .primary-nav .mobile-nav-login { background: #8a4058; color: #fff; }
+}
 :root[data-theme="dark"] .brand-name strong { color: #fff6f3; }
 :root[data-theme="dark"] .brand-name strong span { color: var(--gold); }
 :root[data-theme="dark"] .brand-name small { color: #d6bfc4; }

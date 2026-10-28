@@ -50,4 +50,6 @@ The [architecture notes](docs/architecture.md) describe the application structur
 
 The included Compose file binds the website to `127.0.0.1` for local development. A public server needs a separate deployment configuration, TLS, operational monitoring, backups, and a real verification delivery service.
 
+For an isolated Ubuntu VM, follow the [Ubuntu VM deployment guide](docs/ubuntu-vm-deployment.md) and use `compose.vm.yaml` instead of the laptop Compose file.
+
 Registration stores a keyed fingerprint and last four characters of the normalized identity number rather than the full number. The address is stored in the database. The fingerprint key lives in a separate Docker volume and must remain paired with its database. This local flow does not verify a real person or document, so do not use real identity information or treat it as a public banking onboarding process.

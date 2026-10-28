@@ -2,12 +2,12 @@
 .chat-widget{position:fixed;right:24px;bottom:22px;z-index:90;font-family:Arial,sans-serif}
 .chat-launcher{display:flex;align-items:center;gap:9px;background:#67253d;color:#fff;border:1px solid #d8b875;border-radius:999px;padding:11px 19px;box-shadow:0 14px 30px #3214214d;cursor:pointer;font:700 .76rem Arial,sans-serif;letter-spacing:.01em}
 .chat-launcher:hover,.chat-launcher:focus-visible{background:#822f4d;outline:2px solid #e7c679;outline-offset:2px}
-.chat-launcher span{display:grid;place-items:center;width:29px;height:29px;border-radius:50%;background:#e5c27e;color:#501e34;font-size:1.2rem}
+.chat-launcher img{display:block;width:30px;height:30px;flex:none;border-radius:8px}
 .chat-panel{width:min(380px,calc(100vw - 30px));height:min(560px,calc(100vh - 108px));margin:0 0 12px auto;background:#fff;border:1px solid #e2d5ce;border-radius:16px;box-shadow:0 22px 70px #2c13244d;overflow:hidden;display:flex;flex-direction:column}
 .chat-panel[hidden]{display:none}
 .chat-panel-header{display:flex;align-items:center;gap:10px;background:linear-gradient(120deg,#3b1725,#742d48);color:#fff;padding:16px 17px}
 .chat-panel-header strong,.chat-panel-header small{display:block}.chat-panel-header strong{font-family:Georgia,serif;font-weight:400;font-size:1.1rem}.chat-panel-header small{font-size:.68rem;color:#e8d6d6;margin-top:2px}
-.chat-avatar{display:grid;place-items:center;width:36px;height:36px;flex:none;border:1px solid #d3b373;border-radius:50%;color:#e8c47e;font-size:1.3rem}.chat-close{margin-left:auto;background:transparent;border:0;color:#fff;font-size:1.6rem;line-height:1;cursor:pointer}
+.chat-avatar{display:block;width:40px;height:40px;flex:none;border-radius:9px;box-shadow:0 3px 10px #1f081c66}.chat-close{margin-left:auto;background:transparent;border:0;color:#fff;font-size:1.6rem;line-height:1;cursor:pointer}
 .chat-messages{flex:1;min-height:0;overflow:auto;padding:18px 15px;background:#fcfaf7;display:flex;flex-direction:column;gap:12px}
 .chat-message{max-width:88%;border-radius:12px;padding:10px 13px;font-size:.76rem;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
 .chat-message-assistant{background:#f2e8e3;color:#351724;align-self:flex-start;border-bottom-left-radius:3px}

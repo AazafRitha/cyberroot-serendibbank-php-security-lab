@@ -1,3 +1,21 @@
+const themeToggle = document.querySelector('[data-theme-toggle]');
+if (themeToggle) {
+  const updateThemeToggle = () => {
+    const dark = document.documentElement.dataset.theme === 'dark';
+    themeToggle.setAttribute('aria-pressed', String(dark));
+    themeToggle.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} mode`);
+    themeToggle.querySelector('[data-theme-label]').textContent = dark ? 'Light mode' : 'Dark mode';
+    themeToggle.querySelector('[data-theme-icon]').textContent = dark ? '☀' : '☾';
+  };
+  themeToggle.addEventListener('click', () => {
+    const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = nextTheme;
+    try { localStorage.setItem('serendib-theme', nextTheme); } catch { /* Theme still changes for this page. */ }
+    updateThemeToggle();
+  });
+  updateThemeToggle();
+}
+
 document.querySelectorAll('[data-filter-group]').forEach((group) => {
   const name = group.dataset.filterGroup;
   const list = document.querySelector(`[data-filter-items="${name}"]`);

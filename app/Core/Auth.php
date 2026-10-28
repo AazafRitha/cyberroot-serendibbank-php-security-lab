@@ -43,11 +43,12 @@ final class Auth
                 session_start();
             } else {
                 $statement = Database::connect()->prepare(
-                    'SELECT customer_id, display_name, role, session_version FROM users WHERE id = :id LIMIT 1'
+                    'SELECT customer_id, display_name, role, is_active, session_version FROM users WHERE id = :id LIMIT 1'
                 );
                 $statement->execute(['id' => (int) ($auth['id'] ?? 0)]);
                 $record = $statement->fetch();
-                if ($record === false || (int) $record['session_version'] !== (int) ($auth['session_version'] ?? 0)) {
+                if ($record === false || (int) $record['is_active'] !== 1 ||
+                    (int) $record['session_version'] !== (int) ($auth['session_version'] ?? 0)) {
                     self::logout();
                     session_id('');
                     session_start();

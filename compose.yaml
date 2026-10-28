@@ -11,8 +11,20 @@ services:
       DB_USER: ${DB_USER:?Set DB_USER in .env}
       DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
       APP_HTTPS: ${APP_HTTPS:-0}
+      MANAGEMENT_HOST: ${MANAGEMENT_HOST:-manage.localhost}
+      MAIL_TRANSPORT: ${MAIL_TRANSPORT:-outbox}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-SerendibBank}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_ENCRYPTION: ${SMTP_ENCRYPTION:-starttls}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
     volumes:
-      - ./:/var/www/html
+      - ./app:/var/www/html/app
+      - ./public:/var/www/html/public
+      - ./scripts:/var/www/html/scripts
+      - ./database:/var/www/html/database
       - otp_outbox:/var/www/html/var/otp
       - identity_keys:/var/www/html/var/identity
       - support_uploads:/var/www/html/public/uploads
@@ -22,6 +34,14 @@ services:
     networks:
       - frontend
       - database
+
+  mailpit:
+    image: axllent/mailpit:v1.30.0
+    profiles: [mailtest]
+    ports:
+      - "127.0.0.1:8025:8025"
+    networks:
+      - frontend
 
   db:
     image: mysql:8.4

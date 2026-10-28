@@ -14,6 +14,15 @@ services:
       DB_USER: ${DB_USER:?Set DB_USER in .env}
       DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
       APP_HTTPS: ${APP_HTTPS:-0}
+      MANAGEMENT_HOST: ${MANAGEMENT_HOST:-manage.localhost}
+      MAIL_TRANSPORT: ${MAIL_TRANSPORT:-outbox}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-SerendibBank}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_ENCRYPTION: ${SMTP_ENCRYPTION:-starttls}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
     volumes:
       - otp_outbox:/var/www/html/var/otp
       - identity_keys:/var/www/html/var/identity

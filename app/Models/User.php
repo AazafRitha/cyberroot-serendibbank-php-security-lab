@@ -17,7 +17,7 @@ final class User
     public function findByEmail(string $email): array|false
     {
         $statement = $this->pdo->prepare(
-            'SELECT id, customer_id, display_name, email, password_hash, role, session_version FROM users WHERE email = :email LIMIT 1'
+            'SELECT id, customer_id, display_name, email, password_hash, role, is_active, session_version FROM users WHERE email = :email LIMIT 1'
         );
         $statement->execute(['email' => $email]);
         return $statement->fetch();

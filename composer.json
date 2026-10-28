@@ -1,0 +1,7 @@
+{
+  "name": "cyberroot/serendibbank",
+  "description": "SerendibBank PHP application",
+  "require": {
+    "phpmailer/phpmailer": "^6.10"
+  }
+}

@@ -113,7 +113,7 @@ sudo docker compose -f compose.vm.yaml up -d --force-recreate
 curl -fsS -o /dev/null -w '%{http_code}\n' https://bank.example.org/
 ```
 
-Caddy obtains and renews the HTTPS certificate when DNS points to the server and ports 80/443 are reachable. [Caddy's HTTPS guide](https://caddyserver.com/docs/quick-starts/https) explains those requirements. If HTTPS fails, check `sudo journalctl -u caddy --no-pager -n 80`, DNS, and both firewalls.
+Caddy obtains and renews the HTTPS certificate when DNS points to the server and ports 80/443 are reachable. [Caddy's HTTPS guide](https://caddyserver.com/docs/quick-starts/https) explains those requirements. If HTTPS fails, check `sudo journalctl -u caddy --no-pager -n 80`, DNS, and both firewalls. For the separate management subdomain and company SMTP delivery, follow the [email and management setup](email-and-management.md) before inviting users.
 
 ## 5. Operate and update the VM
 
@@ -129,6 +129,6 @@ The MySQL, upload, OTP, and identity-key volumes survive `docker compose down`. 
 
 ### Before inviting public testers
 
-- The current OTP code is written to a local Docker volume and read by an administrator with `scripts/read-otp.php`. Remote users cannot receive their sign-in code yet. Add a real delivery method or an operator-led process before inviting them to register.
+- The default OTP transport writes a code to a local Docker volume. Set up and verify company SMTP delivery before inviting remote users; otherwise they cannot receive their sign-in codes.
 - The site is intentionally vulnerable. Keep the VM isolated from other systems, never use real identity or financial information, set clear testing scope and contact details, monitor the VM, and have a way to stop access or restore a snapshot.
 - Do not reuse this VM for any other service. The public banking-like interface does not verify real customers or documents.

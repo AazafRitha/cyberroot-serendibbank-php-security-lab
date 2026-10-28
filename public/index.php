@@ -17,15 +17,43 @@ use CyberRoot\SerendibBank\Controllers\DocumentController;
 use CyberRoot\SerendibBank\Controllers\SavingsController;
 use CyberRoot\SerendibBank\Controllers\ContactController;
 use CyberRoot\SerendibBank\Controllers\SettingsController;
+use CyberRoot\SerendibBank\Controllers\ManagementController;
 use CyberRoot\SerendibBank\Core\Router;
 use CyberRoot\SerendibBank\Core\View;
 use CyberRoot\SerendibBank\Core\Auth;
+use CyberRoot\SerendibBank\Core\ManagementView;
 
 require dirname(__DIR__) . '/app/bootstrap.php';
 
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self' 'unsafe-inline'; frame-src https://www.openstreetmap.org; form-action 'self'; frame-ancestors 'none'; base-uri 'none'");
+
+$managementHost = strtolower(rtrim((string) (getenv('MANAGEMENT_HOST') ?: 'manage.localhost'), '.'));
+$requestHost = strtolower(rtrim(explode(':', (string) ($_SERVER['HTTP_HOST'] ?? ''))[0], '.'));
+if ($requestHost === $managementHost) {
+    $management = new ManagementController();
+    $managementRouter = new Router();
+    $managementRouter->get('/', [$management, 'dashboard']);
+    $managementRouter->get('/login', [$management, 'showLogin']);
+    $managementRouter->post('/login', [$management, 'login']);
+    $managementRouter->get('/verify', [$management, 'showOtp']);
+    $managementRouter->post('/verify', [$management, 'verifyOtp']);
+    $managementRouter->post('/logout', [$management, 'logout']);
+    $managementRouter->post('/users/update', [$management, 'updateUser']);
+    $managementRouter->post('/applications/review', [$management, 'reviewApplication']);
+    $managementRouter->post('/support/resolve', [$management, 'resolveSupport']);
+    $managementRouter->post('/contact/resolve', [$management, 'resolveContact']);
+    try {
+        Auth::start();
+        $managementRouter->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');
+    } catch (Throwable $exception) {
+        error_log((string) $exception);
+        http_response_code(500);
+        ManagementView::render('error', ['title' => 'Service unavailable', 'message' => 'Please try again later.']);
+    }
+    return;
+}
 
 $router = new Router();
 $router->get('/', [new HomeController(), 'index']);

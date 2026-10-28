@@ -7,6 +7,7 @@ namespace CyberRoot\SerendibBank\Controllers;
 use CyberRoot\SerendibBank\Core\Auth;
 use CyberRoot\SerendibBank\Core\Database;
 use CyberRoot\SerendibBank\Core\Identity;
+use CyberRoot\SerendibBank\Core\MailDelivery;
 use CyberRoot\SerendibBank\Core\View;
 use CyberRoot\SerendibBank\Core\OtpOutbox;
 use CyberRoot\SerendibBank\Models\User;
@@ -170,7 +171,7 @@ final class AuthController
             return;
         }
         $user = $users->findByEmail($email);
-        $valid = $user !== false && password_verify($password, (string) $user['password_hash']);
+        $valid = $user !== false && (int) $user['is_active'] === 1 && password_verify($password, (string) $user['password_hash']);
         if (!$valid) {
             $users->recordFailedLogin($ip);
             if ($user === false) {
@@ -181,8 +182,23 @@ final class AuthController
             return;
         }
 
+        if ($user['role'] === 'admin') {
+            $this->loginFailed($email, 'Use the management workspace for this account.');
+            return;
+        }
+
         $code = str_pad((string) random_int(1, 999999), 6, '0', STR_PAD_LEFT);
-        OtpOutbox::deliver($email, $code);
+        try {
+            MailDelivery::sendSignInCode((string) $user['email'], $code);
+        } catch (\Throwable $exception) {
+            http_response_code(503);
+            View::render('login', [
+                'title' => 'Sign in | SerendibBank',
+                'error' => 'The verification code could not be sent. Please try again later.',
+                'email' => $email,
+            ]);
+            return;
+        }
         Auth::beginOtp($user, $code);
         header('Location: /verify', true, 303);
     }

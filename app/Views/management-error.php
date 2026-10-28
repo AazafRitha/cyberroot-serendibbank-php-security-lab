@@ -1,0 +1,1 @@
+<section class="management-error"><span class="management-eyebrow">Management workspace</span><h1><?= $escape($data['title'] ?? 'Something went wrong') ?></h1><p><?= $escape($data['message'] ?? 'Please try again.') ?></p><a class="management-button" href="/">Return to workspace <span aria-hidden="true">→</span></a></section>

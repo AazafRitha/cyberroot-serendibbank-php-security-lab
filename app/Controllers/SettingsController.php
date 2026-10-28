@@ -31,7 +31,7 @@ final class SettingsController
         $role = $_POST['role'] ?? $user['role'];
         if (!is_string($name) || strlen(trim($name)) < 2 || strlen($name) > 120 ||
             !is_string($email) || strlen($email) > 190 || filter_var($email, FILTER_VALIDATE_EMAIL) === false ||
-            !is_string($role) || !in_array($role, ['customer', 'staff'], true)) {
+            !is_string($role) || !in_array($role, ['customer', 'staff', 'admin'], true)) {
             http_response_code(422);
             $this->render((int) $user['id'], 'Check your name and email, then try again.');
             return;

@@ -17,10 +17,11 @@ $customerId = $role === 'customer' ? filter_var($argv[4] ?? null, FILTER_VALIDAT
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 190 ||
     $name === '' || strlen($name) > 120 ||
-    !in_array($role, ['customer', 'staff'], true) ||
+    !in_array($role, ['customer', 'staff', 'admin'], true) ||
     ($role === 'customer' && (!$customerId || $customerId < 1))) {
     fwrite(STDERR, "Usage: php scripts/create-user.php EMAIL DISPLAY_NAME customer CUSTOMER_ID\n");
     fwrite(STDERR, "   or: php scripts/create-user.php EMAIL DISPLAY_NAME staff\n");
+    fwrite(STDERR, "   or: php scripts/create-user.php EMAIL DISPLAY_NAME admin\n");
     exit(1);
 }
 

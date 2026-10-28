@@ -34,7 +34,7 @@
                 <a href="/digital">Digital banking</a>
                 <a href="/locations">Locations</a>
             </nav>
-            <a class="header-login" href="/login">Online banking <span aria-hidden="true">↗</span></a>
+            <?php if ($data['currentUser'] !== null): ?><a class="header-login" href="<?= $data['currentUser']['role'] === 'staff' ? '/staff' : '/dashboard' ?>"><?= $data['currentUser']['role'] === 'staff' ? 'Service workspace' : 'My banking' ?> <span aria-hidden="true">↗</span></a><?php else: ?><a class="header-login" href="/login">Online banking <span aria-hidden="true">↗</span></a><?php endif; ?>
         </div>
     </header>
 

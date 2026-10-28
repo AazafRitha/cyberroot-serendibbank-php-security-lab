@@ -153,7 +153,7 @@ final class Auth
         $user = self::user();
         if ($user === null) {
             $path = parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH);
-            if (is_string($path) && in_array($path, ['/dashboard', '/transfer', '/apply/account', '/apply/card', '/support/request', '/staff'], true)) {
+            if (is_string($path) && in_array($path, ['/dashboard', '/settings', '/transfer', '/apply/account', '/apply/card', '/support/request', '/staff'], true)) {
                 $_SESSION['after_login'] = $path;
             }
             header('Location: /login', true, 303);

@@ -12,5 +12,5 @@
             <p class="field-help">Transfers are available between accounts in the same currency. Maximum LKR 1,000,000.00 per transfer.</p>
             <button class="button" type="submit">Complete transfer <span aria-hidden="true">→</span></button>
         </form>
-    </section><aside class="portal-aside"><span class="aside-icon" aria-hidden="true">✦</span><h2>Before you continue</h2><p>Check both account numbers and the amount carefully. Your balances and activity will update after the transfer completes.</p><p>If something does not look right, stop and contact support.</p><a class="text-link" href="/support/request">Contact support <span aria-hidden="true">↗</span></a></aside></div>
+    </section><aside class="portal-aside transfer-aside"><img src="/assets/transfer-lifestyle.webp" alt="Customers planning a payment together"><div><span class="aside-icon" aria-hidden="true">✦</span><h2>Before you continue</h2><p>Check both account numbers and the amount carefully. Your balances and activity will update after the transfer completes.</p><p>If something does not look right, stop and contact support.</p><a class="text-link" href="/support/request">Contact support <span aria-hidden="true">↗</span></a></div></aside></div>
 </div>

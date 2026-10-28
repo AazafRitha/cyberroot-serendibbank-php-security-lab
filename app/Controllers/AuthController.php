@@ -129,7 +129,7 @@ final class AuthController
         OtpOutbox::clear((string) $pending['email']);
         $afterLogin = $_SESSION['after_login'] ?? '/dashboard';
         Auth::login($user);
-        if (!is_string($afterLogin) || !in_array($afterLogin, ['/dashboard', '/transfer', '/apply/account', '/apply/card', '/support/request', '/staff'], true) ||
+        if (!is_string($afterLogin) || !in_array($afterLogin, ['/dashboard', '/settings', '/transfer', '/apply/account', '/apply/card', '/support/request', '/staff'], true) ||
             ($user['role'] === 'staff' && $afterLogin !== '/staff') ||
             ($user['role'] === 'customer' && $afterLogin === '/staff')) {
             $afterLogin = $user['role'] === 'staff' ? '/staff' : '/dashboard';

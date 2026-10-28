@@ -23,6 +23,7 @@ jobs:
         run: |
           python3 tests/smoke.py
           python3 tests/new-features.py
+          python3 tests/settings-workflows.py
       - name: Show service logs on failure
         if: failure()
         run: docker compose logs --tail=100

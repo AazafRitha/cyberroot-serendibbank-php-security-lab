@@ -18,7 +18,7 @@ final class Account
     public function forCustomer(int $customerId): array
     {
         $statement = $this->pdo->prepare(
-            'SELECT id, account_number, account_type, balance, currency
+            'SELECT id, account_number, account_type, balance, currency, status
              FROM accounts WHERE customer_id = :customer_id ORDER BY id'
         );
         $statement->execute(['customer_id' => $customerId]);
@@ -53,7 +53,7 @@ final class Account
         $this->pdo->beginTransaction();
         try {
             $lock = $this->pdo->prepare(
-                'SELECT id, account_number, currency FROM accounts
+                'SELECT id, account_number, currency, status FROM accounts
                  WHERE id IN (?, ?) AND customer_id = ? ORDER BY id FOR UPDATE'
             );
             $lock->execute([$fromId, $toId, $customerId]);
@@ -67,6 +67,9 @@ final class Account
             }
             if ($accounts[$fromId]['currency'] !== $accounts[$toId]['currency']) {
                 throw new DomainException('Choose accounts with the same currency.');
+            }
+            if ($accounts[$fromId]['status'] !== 'active' || $accounts[$toId]['status'] !== 'active') {
+                throw new DomainException('One of these accounts is currently unavailable for transfers.');
             }
 
             $debit = $this->pdo->prepare(
@@ -111,7 +114,7 @@ final class Account
         $this->pdo->beginTransaction();
         try {
             $lock = $this->pdo->prepare(
-                'SELECT id, account_number, currency FROM accounts
+                'SELECT id, account_number, currency, status FROM accounts
                  WHERE id IN (?, ?) AND customer_id = ? ORDER BY id FOR UPDATE'
             );
             $lock->execute([$fromId, $toId, $customerId]);
@@ -125,6 +128,9 @@ final class Account
             }
             if ($accounts[$fromId]['currency'] !== $accounts[$toId]['currency']) {
                 throw new DomainException('Choose accounts with the same currency.');
+            }
+            if ($accounts[$fromId]['status'] !== 'active' || $accounts[$toId]['status'] !== 'active') {
+                throw new DomainException('One of these accounts is currently unavailable for transfers.');
             }
 
             $debit = $this->pdo->prepare('UPDATE accounts SET balance = balance - ? WHERE id = ? AND balance >= ?');

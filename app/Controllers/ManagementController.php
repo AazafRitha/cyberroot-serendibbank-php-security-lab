@@ -13,6 +13,7 @@ use CyberRoot\SerendibBank\Models\ContactRequests;
 use CyberRoot\SerendibBank\Models\Management;
 use CyberRoot\SerendibBank\Models\Portal;
 use CyberRoot\SerendibBank\Models\User;
+use DomainException;
 use Throwable;
 
 final class ManagementController
@@ -53,7 +54,7 @@ final class ManagementController
         }
         $user = $users->findByEmail($email);
         if ($user === false || (int) $user['is_active'] !== 1 ||
-            !in_array($user['role'], ['staff', 'admin'], true) ||
+            !in_array($user['role'], ['staff', 'admin', 'super_admin'], true) ||
             !password_verify($password, (string) $user['password_hash'])) {
             $users->recordFailedLogin($ip);
             $this->loginError('Check your sign-in details.');
@@ -104,7 +105,7 @@ final class ManagementController
         $users = new User(Database::connect());
         $user = $users->findByEmail((string) $pending['email']);
         if ($user === false || (int) $user['is_active'] !== 1 ||
-            !in_array($user['role'], ['staff', 'admin'], true) ||
+            !in_array($user['role'], ['staff', 'admin', 'super_admin'], true) ||
             (int) $user['id'] !== (int) $pending['id'] ||
             (int) $user['session_version'] !== (int) $pending['session_version']) {
             unset($_SESSION['pending_login']);
@@ -125,19 +126,31 @@ final class ManagementController
         }
         $pdo = Database::connect();
         $management = new Management($pdo);
-        $search = $_GET['search'] ?? '';
-        $search = is_string($search) ? substr(trim($search), 0, 80) : '';
+        $searches = [];
+        foreach (['customer', 'account', 'transaction', 'user'] as $kind) {
+            $value = $_GET[$kind . '_search'] ?? '';
+            $searches[$kind] = is_string($value) ? substr(trim($value), 0, 80) : '';
+        }
         $flash = $_SESSION['management_flash'] ?? null;
+        $newEmployee = $_SESSION['management_new_employee'] ?? null;
         unset($_SESSION['management_flash']);
+        unset($_SESSION['management_new_employee']);
         ManagementView::render('dashboard', [
             'title' => 'Management workspace | SerendibBank',
             'summary' => $management->overview(),
-            'users' => $user['role'] === 'admin' ? $management->users($search) : [],
-            'search' => $search,
+            'customers' => $management->customers($searches['customer']),
+            'accounts' => $management->accounts($searches['account']),
+            'transactions' => $management->transactions($searches['transaction']),
+            'ledgerRequests' => $management->ledgerRequests(),
+            'users' => in_array($user['role'], ['admin', 'super_admin'], true) ? $management->users($searches['user']) : [],
+            'auditEntries' => $user['role'] === 'super_admin' ? $management->auditEntries() : [],
+            'searches' => $searches,
+            'search' => $searches['user'],
             'applications' => (new Portal($pdo))->staffApplications(),
             'supportRequests' => (new Portal($pdo))->staffSupportRequests(),
             'contactRequests' => (new ContactRequests($pdo))->recent(),
             'flash' => is_string($flash) ? $flash : null,
+            'newEmployee' => is_array($newEmployee) ? $newEmployee : null,
         ]);
     }
 
@@ -147,7 +160,7 @@ final class ManagementController
         if ($actor === null) {
             return;
         }
-        if ($actor['role'] !== 'admin') {
+        if (!in_array($actor['role'], ['admin', 'super_admin'], true)) {
             http_response_code(403);
             ManagementView::render('error', ['title' => 'Access unavailable', 'message' => 'This action requires an administrator.']);
             return;
@@ -167,15 +180,186 @@ final class ManagementController
             $this->badRequest();
             return;
         }
+        if ($target['role'] !== 'customer' && $actor['role'] !== 'super_admin') {
+            $this->forbidden();
+            return;
+        }
+        if (in_array($action, ['staff', 'admin', 'super_admin'], true) && $actor['role'] !== 'super_admin') {
+            $this->forbidden();
+            return;
+        }
+        if (in_array($action, ['customer', 'staff', 'admin', 'super_admin'], true) &&
+            $action !== $target['role'] &&
+            ($target['customer_id'] === null || $action !== 'customer') &&
+            $actor['role'] !== 'super_admin') {
+            $this->forbidden();
+            return;
+        }
         $updated = match ($action) {
             'activate' => $management->setStatus($id, true),
             'suspend' => $management->setStatus($id, false),
-            'customer', 'staff', 'admin' => $action !== 'customer' || $target['customer_id'] !== null
+            'customer', 'staff', 'admin', 'super_admin' => $action !== 'customer' || $target['customer_id'] !== null
                 ? $management->setRole($id, $action) : false,
             default => false,
         };
+        if ($updated) {
+            $management->audit((int) $actor['id'], 'user.' . $action, 'user', $id);
+        }
         $_SESSION['management_flash'] = $updated ? 'User access updated.' : 'No user change was made.';
         header('Location: /#users', true, 303);
+    }
+
+    public function createEmployee(): void
+    {
+        $actor = $this->requireManager();
+        if ($actor === null || !$this->checkCsrf()) {
+            return;
+        }
+        if ($actor['role'] !== 'super_admin') {
+            $this->forbidden();
+            return;
+        }
+        $name = $_POST['name'] ?? null;
+        $email = $_POST['email'] ?? null;
+        $role = $_POST['role'] ?? null;
+        if (!is_string($name) || !is_string($email) || !is_string($role) ||
+            trim($name) === '' || mb_strlen($name) > 120 || strlen($email) > 190 ||
+            !filter_var($email, FILTER_VALIDATE_EMAIL) || !in_array($role, ['staff', 'admin'], true)) {
+            $this->badRequest();
+            return;
+        }
+        $email = strtolower(trim($email));
+        $management = new Management(Database::connect());
+        if ((new User(Database::connect()))->findByEmail($email) !== false) {
+            $_SESSION['management_flash'] = 'That email is already registered.';
+            header('Location: /#users', true, 303);
+            return;
+        }
+        $password = rtrim(strtr(base64_encode(random_bytes(24)), '+/', '-_'), '=');
+        $management->createEmployee(trim($name), $email, $role, $password, (int) $actor['id']);
+        $_SESSION['management_new_employee'] = ['email' => $email, 'password' => $password];
+        $_SESSION['management_flash'] = 'Team member created. Copy the temporary password below now.';
+        header('Location: /#users', true, 303);
+    }
+
+    public function updateAccount(): void
+    {
+        $actor = $this->requireManager();
+        if ($actor === null || !$this->checkCsrf()) {
+            return;
+        }
+        if (!in_array($actor['role'], ['admin', 'super_admin'], true)) {
+            $this->forbidden();
+            return;
+        }
+        $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
+        $status = $_POST['status'] ?? null;
+        if (!$id || !in_array($status, ['active', 'frozen'], true)) {
+            $this->badRequest();
+            return;
+        }
+        $changed = (new Management(Database::connect()))->setAccountStatus($id, $status, (int) $actor['id']);
+        $_SESSION['management_flash'] = $changed ? 'Account status updated.' : 'No account change was made.';
+        header('Location: /#accounts', true, 303);
+    }
+
+    public function openAccount(): void
+    {
+        $actor = $this->requireManager();
+        if ($actor === null || !$this->checkCsrf()) {
+            return;
+        }
+        if (!in_array($actor['role'], ['admin', 'super_admin'], true)) {
+            $this->forbidden();
+            return;
+        }
+        $customerId = filter_var($_POST['customer_id'] ?? null, FILTER_VALIDATE_INT);
+        $type = $_POST['account_type'] ?? null;
+        if (!$customerId || !in_array($type, ['Everyday account', 'Savings account'], true)) {
+            $this->badRequest();
+            return;
+        }
+        try {
+            $number = (new Management(Database::connect()))->openAccount($customerId, $type, (int) $actor['id']);
+            $_SESSION['management_flash'] = 'Account ' . $number . ' opened for the customer.';
+        } catch (DomainException $exception) {
+            $_SESSION['management_flash'] = $exception->getMessage();
+        }
+        header('Location: /#accounts', true, 303);
+    }
+
+    public function requestLedgerEntry(): void
+    {
+        $actor = $this->requireManager();
+        if ($actor === null || !$this->checkCsrf()) {
+            return;
+        }
+        $accountId = filter_var($_POST['account_id'] ?? null, FILTER_VALIDATE_INT);
+        $direction = $_POST['direction'] ?? null;
+        $amount = $_POST['amount'] ?? null;
+        $reason = $_POST['reason'] ?? null;
+        if (!$accountId || !in_array($direction, ['credit', 'debit'], true) ||
+            !is_string($amount) || preg_match('/^\d{1,10}(?:\.\d{1,2})?$/D', $amount) !== 1 || (float) $amount <= 0 ||
+            !is_string($reason) || trim($reason) === '' || mb_strlen($reason) > 160) {
+            $this->badRequest();
+            return;
+        }
+        $management = new Management(Database::connect());
+        if (!$management->isActiveAccount($accountId)) {
+            $this->badRequest();
+            return;
+        }
+        $management->requestLedgerEntry($accountId, $direction, $amount, trim($reason), (int) $actor['id']);
+        $_SESSION['management_flash'] = 'Ledger entry submitted for a second team member to review.';
+        header('Location: /#ledger', true, 303);
+    }
+
+    public function decideLedgerEntry(): void
+    {
+        $actor = $this->requireManager();
+        if ($actor === null || !$this->checkCsrf()) {
+            return;
+        }
+        if (!in_array($actor['role'], ['admin', 'super_admin'], true)) {
+            $this->forbidden();
+            return;
+        }
+        $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
+        $decision = $_POST['decision'] ?? null;
+        if (!$id || !in_array($decision, ['approved', 'rejected'], true)) {
+            $this->badRequest();
+            return;
+        }
+        try {
+            $updated = (new Management(Database::connect()))->decideLedgerEntry($id, $decision, (int) $actor['id']);
+            $_SESSION['management_flash'] = $updated ? 'Ledger request ' . $decision . '.' : 'This request has already been reviewed.';
+        } catch (DomainException $exception) {
+            $_SESSION['management_flash'] = $exception->getMessage();
+        }
+        header('Location: /#ledger', true, 303);
+    }
+
+    public function reviewTransaction(): void
+    {
+        $actor = $this->requireManager();
+        if ($actor === null || !$this->checkCsrf()) {
+            return;
+        }
+        $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
+        $status = $_POST['status'] ?? null;
+        $note = $_POST['note'] ?? null;
+        if (!$id || !in_array($status, ['flagged', 'cleared'], true) || !is_string($note) ||
+            trim($note) === '' || mb_strlen($note) > 250) {
+            $this->badRequest();
+            return;
+        }
+        if ($status === 'cleared' && !in_array($actor['role'], ['admin', 'super_admin'], true)) {
+            $this->forbidden();
+            return;
+        }
+        $updated = (new Management(Database::connect()))->reviewTransaction($id, $status, trim($note), (int) $actor['id']);
+        $_SESSION['management_flash'] = $updated ? 'Transaction review recorded.' : 'Transaction not found.';
+        header('Location: /#transactions', true, 303);
     }
 
     public function reviewApplication(): void
@@ -219,6 +403,9 @@ final class ManagementController
             'support' => (new Portal($pdo))->resolveSupportRequest($id, (int) $actor['id']),
             'contact' => (new ContactRequests($pdo))->resolve($id),
         };
+        if ($updated) {
+            (new Management($pdo))->audit((int) $actor['id'], $kind . '.review', $kind, $id);
+        }
         $_SESSION['management_flash'] = $updated ? 'Case updated.' : 'The case was already updated.';
         header('Location: /#cases', true, 303);
     }
@@ -231,7 +418,7 @@ final class ManagementController
             header('Location: /login', true, 303);
             return null;
         }
-        if (!in_array($user['role'], ['staff', 'admin'], true)) {
+        if (!in_array($user['role'], ['staff', 'admin', 'super_admin'], true)) {
             http_response_code(403);
             ManagementView::render('error', ['title' => 'Access unavailable', 'message' => 'This workspace is unavailable for your account.']);
             return null;
@@ -242,7 +429,7 @@ final class ManagementController
     private function isManager(): bool
     {
         $user = Auth::user();
-        return $user !== null && in_array($user['role'], ['staff', 'admin'], true);
+        return $user !== null && in_array($user['role'], ['staff', 'admin', 'super_admin'], true);
     }
 
     private function checkCsrf(): bool
@@ -265,5 +452,11 @@ final class ManagementController
     {
         http_response_code(422);
         ManagementView::render('error', ['title' => 'Invalid request', 'message' => 'Choose a valid item and try again.']);
+    }
+
+    private function forbidden(): void
+    {
+        http_response_code(403);
+        ManagementView::render('error', ['title' => 'Access unavailable', 'message' => 'This action is unavailable for your role.']);
     }
 }

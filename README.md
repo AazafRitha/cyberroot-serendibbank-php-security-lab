@@ -2,7 +2,7 @@
 
 ![SerendibBank logo](public/assets/logo.svg)
 
-SerendibBank is a PHP and MySQL website with public product pages, product information documents, a savings calculator, branch map, general enquiry form, and an online banking portal. It includes customer registration, sign in, verification, account activity, transfers, account and card applications, customer account settings, support requests with attachments, a digital assistant, and a staff workspace. The layout works across desktop and mobile screens.
+SerendibBank is a PHP and MySQL website with public product pages, product information documents, a savings calculator, branch map, general enquiry form, and an online banking portal. It includes customer registration, sign in, verification, account activity, transfers, account and card applications, customer account settings, support requests with attachments, a digital assistant, and a separate operations workspace for staff, administrators, and super administrators. The layout works across desktop and mobile screens.
 
 This repository is for authorized security learning. See the [security testing guide](docs/security-testing-guide.md) for the finding inventory and validation steps. The site itself presents normal banking journeys.
 
@@ -32,7 +32,7 @@ docker compose exec web php scripts/read-otp.php 'customer1@example.test'
 
 To reset a password, run `docker compose exec web php scripts/reset-password.php 'customer1@example.test'`. Use `docker compose down` to stop the containers while keeping MySQL data. `docker compose down -v` removes local database data and the identity fingerprint key; it rebuilds the seed data on the next start. Back up the `identity_keys` volume together with the database if you need to restore registrations.
 
-The laptop uses a local verification-code outbox by default. To send sign-in codes to the account's email address, configure the company SMTP server using the [email and management setup guide](docs/email-and-management.md). The management workspace runs on a separate hostname, `manage.localhost` locally. A VM can use a management subdomain through Caddy. An administrator can be created with `docker compose exec web php scripts/create-user.php 'admin@example.test' 'Operations Manager' admin`; replace the example address with an inbox you control and save the generated password privately.
+The laptop uses a local verification-code outbox by default. To send sign-in codes to the account's email address, configure the company SMTP server using the [email and management setup guide](docs/email-and-management.md). The management workspace runs on a separate hostname, `manage.localhost` locally. A VM can use a management subdomain through Caddy. Bootstrap the first super administrator with `docker compose exec web php scripts/create-user.php 'superadmin@example.test' 'Operations Director' super_admin`; replace the example address with an inbox you control and save the generated password privately. That account can create staff and admin users in the management workspace.
 
 If you use Burp Suite with the local site, follow the [Windows Burp setup](docs/burp-on-windows.md). The site and Burp need different ports. For example, keep Burp's default proxy on 8080 and set `APP_PORT=8082` in `.env`, or keep the site on 8080 and move Burp to 8081.
 

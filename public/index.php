@@ -41,6 +41,12 @@ if ($requestHost === $managementHost) {
     $managementRouter->post('/verify', [$management, 'verifyOtp']);
     $managementRouter->post('/logout', [$management, 'logout']);
     $managementRouter->post('/users/update', [$management, 'updateUser']);
+    $managementRouter->post('/users/create', [$management, 'createEmployee']);
+    $managementRouter->post('/accounts/status', [$management, 'updateAccount']);
+    $managementRouter->post('/accounts/open', [$management, 'openAccount']);
+    $managementRouter->post('/transactions/review', [$management, 'reviewTransaction']);
+    $managementRouter->post('/ledger/request', [$management, 'requestLedgerEntry']);
+    $managementRouter->post('/ledger/decide', [$management, 'decideLedgerEntry']);
     $managementRouter->post('/applications/review', [$management, 'reviewApplication']);
     $managementRouter->post('/support/resolve', [$management, 'resolveSupport']);
     $managementRouter->post('/contact/resolve', [$management, 'resolveContact']);

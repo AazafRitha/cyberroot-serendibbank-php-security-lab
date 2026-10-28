@@ -1,0 +1,19 @@
+<?php $isSuperAdmin = $data['currentUser']['role'] === 'super_admin'; ?>
+<?php if ($data['newEmployee']): ?><div class="management-credential" role="status"><strong>New team member: <?= $escape($data['newEmployee']['email']) ?></strong><span>Temporary password: <code><?= $escape($data['newEmployee']['password']) ?></code></span><small>This appears once. Share it privately with the team member.</small></div><?php endif; ?>
+<?php if ($isSuperAdmin): ?>
+<form class="management-create" method="post" action="/users/create"><input type="hidden" name="_csrf" value="<?= $escape($data['csrfToken']) ?>"><strong>Add team member</strong><label>Name <input name="name" maxlength="120" required></label><label>Work email <input name="email" type="email" maxlength="190" required></label><label>Role <select name="role"><option value="staff">Staff</option><option value="admin">Admin</option></select></label><button type="submit">Create access</button></form>
+<?php endif; ?>
+<form class="management-search" method="get" action="/"><label for="management-user-search">Find a user</label><div><input id="management-user-search" type="search" name="user_search" value="<?= $escape($data['search']) ?>" placeholder="Search by name or email"><button type="submit">Search</button></div></form>
+<div class="management-table-wrap"><table class="management-table"><thead><tr><th>User</th><th>Role</th><th>Accounts</th><th>Last sign in</th><th>Access</th><th>Manage</th></tr></thead><tbody>
+<?php foreach ($data['users'] as $person): ?><tr>
+    <td><strong><?= $escape($person['display_name']) ?></strong><small><?= $escape($person['email']) ?></small></td>
+    <td><?= $escape(ucwords(str_replace('_', ' ', $person['role']))) ?></td>
+    <td><?= $escape($person['account_count']) ?></td>
+    <td><?= $escape($person['last_login_at'] ? substr((string) $person['last_login_at'], 0, 16) : 'Never') ?></td>
+    <td><span class="management-state <?= (int) $person['is_active'] === 1 ? 'is-active' : 'is-suspended' ?>"><?= (int) $person['is_active'] === 1 ? 'Active' : 'Suspended' ?></span></td>
+    <td><?php if ((int) $person['id'] === (int) $data['currentUser']['id']): ?><span class="management-self">Your account</span>
+        <?php elseif (!$isSuperAdmin && $person['role'] !== 'customer'): ?><span class="management-self">Super admin managed</span>
+        <?php else: ?><div class="management-user-actions"><form method="post" action="/users/update"><input type="hidden" name="_csrf" value="<?= $escape($data['csrfToken']) ?>"><input type="hidden" name="id" value="<?= $escape($person['id']) ?>"><input type="hidden" name="action" value="<?= (int) $person['is_active'] === 1 ? 'suspend' : 'activate' ?>"><button type="submit"><?= (int) $person['is_active'] === 1 ? 'Suspend' : 'Activate' ?></button></form>
+        <?php if ($isSuperAdmin): ?><form method="post" action="/users/update"><input type="hidden" name="_csrf" value="<?= $escape($data['csrfToken']) ?>"><input type="hidden" name="id" value="<?= $escape($person['id']) ?>"><label class="sr-only" for="role-<?= $escape($person['id']) ?>">Role for <?= $escape($person['display_name']) ?></label><select id="role-<?= $escape($person['id']) ?>" name="action"><option value="customer" <?= $person['role'] === 'customer' ? 'selected' : '' ?> <?= $person['customer_id'] === null ? 'disabled' : '' ?>>Customer</option><option value="staff" <?= $person['role'] === 'staff' ? 'selected' : '' ?>>Staff</option><option value="admin" <?= $person['role'] === 'admin' ? 'selected' : '' ?>>Admin</option><option value="super_admin" <?= $person['role'] === 'super_admin' ? 'selected' : '' ?>>Super admin</option></select><button type="submit">Save role</button></form><?php endif; ?></div><?php endif; ?>
+    </td>
+</tr><?php endforeach; ?></tbody></table><?php if ($data['users'] === []): ?><p class="management-empty">No users match this search.</p><?php endif; ?></div>

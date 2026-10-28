@@ -35,15 +35,24 @@ On the laptop, `.env` can retain `MAIL_TRANSPORT=outbox` for offline development
 
 `MANAGEMENT_HOST` selects the separate operations site. On the laptop, its default is `manage.localhost`, so use <http://manage.localhost:8082/> when the bank website uses port 8082. If that hostname does not resolve on your machine, add `127.0.0.1 manage.localhost` to the Windows hosts file as an administrator. The public site remains on your normal hostname.
 
-The workspace has its own sign-in and code verification. Staff users see operational totals and service queues. Administrators also see the user directory, search, role controls, and account suspension controls. Changes to a user's role or active status invalidate that user's existing session. The original `/staff` route remains available for the existing local workflows.
+The workspace has its own sign-in and code verification. The role and task split is:
 
-Create the first administrator from a trusted VM terminal, replacing the example address with the administrator's real inbox:
+| Role | Workspace capabilities |
+| --- | --- |
+| Customer | Personal banking site only; own accounts, transfers, applications, and support. |
+| Staff | Customer directory, account and transaction search, service queues, transaction flags, and preparation of ledger credit/debit requests. |
+| Admin | Staff capabilities, customer online-access suspension, account opening/freezing, transaction flag clearance, and approval or rejection of ledger requests prepared by another team member. |
+| Super admin | Admin capabilities, internal staff and admin account creation, role assignment, staff access suspension, and the management activity log. |
+
+Account opening creates a zero-balance LKR everyday or savings account for an existing client. A frozen account cannot be used in the normal or quick transfer flow. A ledger request never changes a balance until a different administrator approves it; approval posts one transaction and updates the account balance in one database transaction. A debit with insufficient funds is refused. These are operational training flows, not a complete core banking ledger or reconciliation system. Changes to a user's role or active status invalidate that user's existing session. The original `/staff` route remains available for the existing local workflows.
+
+Create the first super administrator from a trusted VM terminal, replacing the example address with the administrator's real inbox:
 
 ```bash
-sudo docker compose -f compose.vm.yaml exec web php scripts/create-user.php 'admin@yourdomain.example' 'Operations Manager' admin
+sudo docker compose -f compose.vm.yaml exec web php scripts/create-user.php 'superadmin@yourdomain.example' 'Operations Director' super_admin
 ```
 
-The generated password is shown once. Save it privately. The account can then sign in at the management subdomain and receive its code by company SMTP.
+The generated password is shown once. Save it privately. The account can then sign in at the management subdomain and receive its code by company SMTP. The super admin can create staff and admin accounts in **People & permissions**. A temporary password is displayed once in that session.
 
 For a public VM, set `MANAGEMENT_HOST=manage.yourdomain.example` in `.env` and recreate the web container. Point both the bank and management DNS names to the VM. Add both names to Caddy's `/etc/caddy/Caddyfile`:
 

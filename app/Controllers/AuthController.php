@@ -182,7 +182,7 @@ final class AuthController
             return;
         }
 
-        if ($user['role'] === 'admin') {
+        if (in_array($user['role'], ['admin', 'super_admin'], true)) {
             $this->loginFailed($email, 'Use the management workspace for this account.');
             return;
         }

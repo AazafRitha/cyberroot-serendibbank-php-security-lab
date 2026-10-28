@@ -28,6 +28,7 @@
                 <span class="brand-name"><strong>Serendib<span>Bank</span></strong><small>Here for every tomorrow</small></span>
             </a>
             <nav class="primary-nav" aria-label="Main navigation">
+                <a href="/"<?= (parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) === '/') ? ' aria-current="page"' : '' ?>>Home</a>
                 <a href="/personal">Personal</a>
                 <a href="/cards">Cards</a>
                 <a href="/offers">Offers</a>

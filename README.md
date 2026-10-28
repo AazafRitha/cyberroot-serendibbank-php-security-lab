@@ -8,7 +8,7 @@ This repository is for authorized security learning. See the [security testing g
 
 ## Run locally
 
-Install Docker Desktop and follow the [Windows setup guide](docs/docker-on-windows.md). In PowerShell, open this repository and run:
+Install Docker Desktop and follow the [Windows setup guide](docs/docker-on-windows.md). For the short routine to use each day, see [Start and stop the site](docs/docker-on-windows.md#4-every-day-start-work-and-stop). On the first run only, open this repository in PowerShell and run:
 
 ```powershell
 Copy-Item .env.example .env # first run only; keep an existing .env

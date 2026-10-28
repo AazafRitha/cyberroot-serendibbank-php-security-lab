@@ -46,20 +46,35 @@ Docker Compose reads `compose.yaml`: it builds the PHP/Apache **web** container,
 
 The public site works immediately. To use online banking, create customer and staff logins with the commands in the [README](../README.md#run-locally). Save their generated passwords securely outside the repository, then open <http://localhost:8080/login>.
 
-## 4. Everyday commands
+## 4. Every day: start, work, and stop
 
-Run these in the project folder:
+Think of Docker Desktop as the engine and this project's two containers as the running site: `web` runs PHP and Apache, while `db` stores MySQL data. You do not need XAMPP.
 
-```powershell
-docker compose ps
-docker compose logs --tail=50 web
-docker compose logs --tail=50 db
-docker compose down
-```
+**When you start work:**
 
-`ps` shows status, `logs` shows recent messages, and `down` stops the project while keeping the database. To start it again, use `docker compose up -d`. After changing the Dockerfile or Compose file, use `docker compose up --build -d`.
+1. Open **Docker Desktop** from the Windows Start menu. Wait until it says the engine is running.
+2. Open the SerendibBank folder in VS Code. Open **Terminal → New Terminal** (PowerShell). If your terminal opens somewhere else, move to the project folder:
 
-**Reset only when you want to discard the local database:** `docker compose down -v` removes the named MySQL volume. The seed data is recreated next time you start the stack.
+   ```powershell
+   Set-Location 'C:\Users\aazaf\OneDrive\Documents\ChatGPT\Cyber Root\cyberroot-serendibbank-php-security-lab'
+   ```
+
+3. Start the site and check its status:
+
+   ```powershell
+   docker compose up -d
+   docker compose ps
+   ```
+
+   Expect `web` to be **Up** and `db` to be **Up (healthy)**. Open <http://127.0.0.1:8080/> in your browser. Refresh the page after editing PHP, CSS, or JavaScript files; the project folder is shared with the web container.
+
+**When you finish work:** run `docker compose down` in the same folder. This stops the site and keeps your database and accounts for the next day. You can then close Docker Desktop.
+
+**When something fails:** run `docker compose logs --tail=50 web` for site errors or `docker compose logs --tail=50 db` for database errors. `docker compose logs -f web` shows new site log lines live; press **Ctrl+C** to leave the log view without stopping the containers. If Docker cannot connect, check that Docker Desktop is running.
+
+Use `docker compose up -d --build` after changing the Dockerfile or Compose setup. You do **not** need to rebuild for ordinary PHP, CSS, or JavaScript edits. `Copy-Item .env.example .env` is a first-run step only; keep your existing `.env` and passwords.
+
+**Only when you intend to erase local database data:** `docker compose down -v` removes the MySQL volume. The seeded records return on the next start, but accounts and requests you created are lost.
 
 ## If something fails
 

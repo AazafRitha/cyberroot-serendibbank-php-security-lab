@@ -39,6 +39,51 @@
     </div>
 </div></section>
 
-<section class="section digital-feature"><div class="container digital-feature-inner"><div class="digital-feature-copy"><span class="eyebrow eyebrow-light">SerendibBank digital</span><h2 class="display-heading">Your bank.<br><em>Wherever life happens.</em></h2><p>Check your accounts, follow activity and stay in control with a banking experience that moves with you.</p><a class="button button-light" href="/digital">Explore digital banking <span aria-hidden="true">↗</span></a></div><div class="digital-feature-art" aria-hidden="true"><div class="feature-orbit"></div><div class="feature-phone"><div class="feature-phone-top"></div><span>SerendibBank</span><small>YOUR ACCOUNTS</small><strong>LKR 248,650.00</strong><i></i><i></i><i></i></div><div class="floating-message">✦ &nbsp; Banking, in your hands</div></div></div></section>
+<section class="section digital-feature">
+    <div class="container digital-feature-inner">
+        <div class="digital-feature-copy">
+            <span class="eyebrow eyebrow-light">SerendibBank digital</span>
+            <h2 class="display-heading">Your bank.<br><em>Wherever life happens.</em></h2>
+            <p>Check your accounts, follow activity and stay in control with a banking experience that moves with you.</p>
+            <a class="button button-light" href="/digital">Explore digital banking <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="digital-feature-art">
+            <div class="app-preview-glow" aria-hidden="true"></div>
+            <div class="app-preview-phone" data-app-preview aria-label="Mobile banking preview">
+                <div class="app-preview-status" aria-hidden="true"><span>9:41</span><span class="app-preview-signal">●●● <span class="app-preview-battery"></span></span></div>
+                <div class="app-preview-screen">
+                    <div class="app-preview-brand"><img src="/assets/logo-mark.svg?v=2" alt="" width="24" height="24"><strong>SerendibBank</strong><span class="icon icon-shield-check" aria-hidden="true"></span></div>
+                    <div class="app-preview-greeting"><span>Good morning</span><strong>Make today count.</strong></div>
+                    <div class="app-preview-tabs" role="tablist" aria-label="Banking preview">
+                        <button type="button" id="preview-tab-accounts" role="tab" aria-selected="true" aria-controls="preview-panel-accounts" tabindex="0" data-preview-tab="accounts">Accounts</button>
+                        <button type="button" id="preview-tab-activity" role="tab" aria-selected="false" aria-controls="preview-panel-activity" tabindex="-1" data-preview-tab="activity">Activity</button>
+                    </div>
+                    <section class="app-preview-panel" id="preview-panel-accounts" role="tabpanel" aria-labelledby="preview-tab-accounts" data-preview-panel="accounts">
+                        <div class="app-preview-balance">
+                            <div class="app-preview-balance-top"><span>Available balance</span><button type="button" data-balance-toggle aria-label="Hide balance" aria-pressed="false"><span class="icon icon-eye" aria-hidden="true"></span></button></div>
+                            <strong data-balance-value data-amount="LKR 248,650.00" aria-live="polite">LKR 248,650.00</strong>
+                            <small>Everyday account &nbsp; •••• 4582</small>
+                        </div>
+                        <div class="app-preview-actions">
+                            <a href="/dashboard"><span class="app-preview-action-icon"><span class="icon icon-wallet-cards" aria-hidden="true"></span></span>Accounts</a>
+                            <a href="/transfer"><span class="app-preview-action-icon"><span class="icon icon-send" aria-hidden="true"></span></span>Transfer</a>
+                            <a href="/statement"><span class="app-preview-action-icon"><span class="icon icon-clock-3" aria-hidden="true"></span></span>Statements</a>
+                        </div>
+                        <div class="app-preview-card"><span class="icon icon-credit-card" aria-hidden="true"></span><span><strong>Your cards</strong><small>Manage everyday spending</small></span><a href="/cards" aria-label="Explore cards"><span class="icon icon-arrow-up-right" aria-hidden="true"></span></a></div>
+                    </section>
+                    <section class="app-preview-panel" id="preview-panel-activity" role="tabpanel" aria-labelledby="preview-tab-activity" data-preview-panel="activity" hidden>
+                        <div class="app-preview-activity-heading"><strong>Recent activity</strong><span>This week</span></div>
+                        <div class="app-preview-transaction"><span class="app-preview-transaction-icon"><span class="icon icon-credit-card" aria-hidden="true"></span></span><span><strong>Card purchase</strong><small>Today · 10:42</small></span><b>− LKR 3,250</b></div>
+                        <div class="app-preview-transaction"><span class="app-preview-transaction-icon income"><span class="icon icon-arrow-down-left" aria-hidden="true"></span></span><span><strong>Salary deposit</strong><small>Yesterday · 09:15</small></span><b>+ LKR 18,000</b></div>
+                        <div class="app-preview-transaction"><span class="app-preview-transaction-icon"><span class="icon icon-send" aria-hidden="true"></span></span><span><strong>Funds transfer</strong><small>Earlier this week</small></span><b>− LKR 5,600</b></div>
+                        <a class="app-preview-more" href="/dashboard">View all activity <span class="icon icon-arrow-up-right" aria-hidden="true"></span></a>
+                    </section>
+                </div>
+                <div class="app-preview-homebar" aria-hidden="true"></div>
+            </div>
+            <div class="app-preview-float" aria-hidden="true"><span class="icon icon-shield-check"></span><span>Banking in your hands</span></div>
+        </div>
+    </div>
+</section>
 
 <section class="section help-home container"><div><span class="eyebrow">Here when you need us</span><h2 class="display-heading">How can we <em>help?</em></h2><p>Answers, guidance and a friendly face are always within reach.</p><button type="button" class="button help-chat-button" data-chat-open>Ask our assistant <span aria-hidden="true">↗</span></button></div><div class="help-links"><a href="/locations"><span class="help-symbol" aria-hidden="true">⌖</span><span><strong>Find a branch or ATM</strong><small>Find the nearest place to bank with us.</small></span><span aria-hidden="true">↗</span></a><a href="/support"><span class="help-symbol" aria-hidden="true">?</span><span><strong>Help and support</strong><small>Get answers to everyday banking questions.</small></span><span aria-hidden="true">↗</span></a></div></section>

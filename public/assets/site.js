@@ -9,7 +9,6 @@ if (menuToggle && primaryNav) {
     header.classList.toggle('menu-open', expanded);
     menuToggle.setAttribute('aria-expanded', String(expanded));
     menuToggle.setAttribute('aria-label', expanded ? 'Close menu' : 'Open menu');
-    menuToggle.querySelector('.menu-toggle-text').textContent = expanded ? 'Close' : 'Menu';
     primaryNav.inert = menuMedia.matches && !expanded;
     if (menuMedia.matches && !expanded) primaryNav.setAttribute('aria-hidden', 'true');
     else primaryNav.removeAttribute('aria-hidden');
@@ -29,6 +28,7 @@ if (menuToggle && primaryNav) {
   });
   menuMedia.addEventListener('change', () => setMenuOpen(false));
   setMenuOpen(false);
+  requestAnimationFrame(() => document.documentElement.classList.add('menu-ready'));
 }
 
 const themeToggle = document.querySelector('[data-theme-toggle]');
@@ -38,7 +38,6 @@ if (themeToggle) {
     themeToggle.setAttribute('aria-pressed', String(dark));
     themeToggle.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} mode`);
     themeToggle.querySelector('[data-theme-label]').textContent = dark ? 'Light mode' : 'Dark mode';
-    themeToggle.querySelector('[data-theme-icon]').textContent = dark ? '☀' : '☾';
   };
   themeToggle.addEventListener('click', () => {
     const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
@@ -48,6 +47,43 @@ if (themeToggle) {
   });
   updateThemeToggle();
 }
+
+document.querySelectorAll('[data-app-preview]').forEach((preview) => {
+  const tabs = Array.from(preview.querySelectorAll('[data-preview-tab]'));
+  const panels = Array.from(preview.querySelectorAll('[data-preview-panel]'));
+  const selectTab = (selected) => {
+    tabs.forEach((tab) => {
+      const active = tab === selected;
+      tab.setAttribute('aria-selected', String(active));
+      tab.tabIndex = active ? 0 : -1;
+    });
+    panels.forEach((panel) => { panel.hidden = panel.dataset.previewPanel !== selected.dataset.previewTab; });
+  };
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => selectTab(tab));
+    tab.addEventListener('keydown', (event) => {
+      const direction = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+      if (!direction && event.key !== 'Home' && event.key !== 'End') return;
+      event.preventDefault();
+      const next = event.key === 'Home' ? tabs[0] : event.key === 'End' ? tabs[tabs.length - 1] : tabs[(index + direction + tabs.length) % tabs.length];
+      selectTab(next);
+      next.focus();
+    });
+  });
+  const balanceToggle = preview.querySelector('[data-balance-toggle]');
+  const balanceValue = preview.querySelector('[data-balance-value]');
+  if (balanceToggle && balanceValue) {
+    balanceToggle.addEventListener('click', () => {
+      const hidden = balanceToggle.getAttribute('aria-pressed') !== 'true';
+      balanceToggle.setAttribute('aria-pressed', String(hidden));
+      balanceToggle.setAttribute('aria-label', hidden ? 'Show balance' : 'Hide balance');
+      balanceValue.textContent = hidden ? 'LKR ••••••••' : balanceValue.dataset.amount;
+      const icon = balanceToggle.querySelector('.icon');
+      icon.classList.toggle('icon-eye', !hidden);
+      icon.classList.toggle('icon-eye-off', hidden);
+    });
+  }
+});
 
 document.querySelectorAll('[data-filter-group]').forEach((group) => {
   const name = group.dataset.filterGroup;

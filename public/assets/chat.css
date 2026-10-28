@@ -22,3 +22,4 @@
 .chat-form button:disabled{opacity:.5;cursor:wait}
 .chat-footnote{font-size:.61rem;line-height:1.4;color:#765e63;margin:0;padding:0 13px 13px}.chat-footnote a{color:#6c2b44;font-weight:700}
 @media(max-width:600px){.chat-widget{right:12px;bottom:12px}.chat-panel{height:min(570px,calc(100dvh - 95px));margin-bottom:9px}.chat-launcher{padding:8px 12px}.chat-launcher strong{font-size:.7rem}.chat-suggestions{flex-wrap:wrap;overflow:visible}.chat-suggestions button{flex:1 1 auto}}
+@media(max-width:600px){.chat-launcher{width:52px;height:52px;justify-content:center;padding:0;border-radius:50%}.chat-launcher img{width:35px;height:35px;border-radius:50%}.chat-launcher strong{display:none}}

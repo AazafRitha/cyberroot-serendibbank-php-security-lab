@@ -7,12 +7,13 @@
     <meta name="theme-color" content="#3b1725">
     <title><?= $escape($data['title'] ?? 'SerendibBank') ?></title>
     <script>try { document.documentElement.dataset.theme = localStorage.getItem('serendib-theme') === 'dark' ? 'dark' : 'light'; } catch { document.documentElement.dataset.theme = 'light'; }</script>
-    <link rel="stylesheet" href="/assets/style.css?v=5">
+    <link rel="stylesheet" href="/assets/style.css?v=7">
     <link rel="stylesheet" href="/assets/portal.css">
-    <link rel="stylesheet" href="/assets/chat.css?v=2">
-    <link rel="stylesheet" href="/assets/theme.css?v=2">
+    <link rel="stylesheet" href="/assets/chat.css?v=3">
+    <link rel="stylesheet" href="/assets/theme.css?v=3">
+    <link rel="stylesheet" href="/assets/home-preview.css?v=1">
     <link rel="icon" type="image/svg+xml" href="/assets/logo-mark.svg?v=2">
-    <script src="/assets/site.js?v=3" defer></script>
+    <script src="/assets/site.js?v=5" defer></script>
     <script src="/assets/chat.js" defer></script>
 </head>
 <body>
@@ -60,8 +61,8 @@
                 <?php endforeach; ?>
                 <a class="mobile-nav-login" href="<?= $data['currentUser'] !== null ? ($data['currentUser']['role'] === 'staff' ? '/staff' : '/dashboard') : '/login' ?>"><?= $data['currentUser'] !== null ? ($data['currentUser']['role'] === 'staff' ? 'Service workspace' : 'My banking') : 'Online banking' ?> <span aria-hidden="true">↗</span></a>
             </nav>
-            <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false"><span class="theme-toggle-icon" data-theme-icon aria-hidden="true">☾</span><span class="theme-toggle-label" data-theme-label>Dark mode</span></button>
-            <button class="menu-toggle" type="button" data-menu-toggle aria-controls="primary-navigation" aria-expanded="false" aria-label="Open menu"><span class="menu-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span><span class="menu-toggle-text">Menu</span></button>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false"><span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-thumb"><span class="icon icon-sun"></span><span class="icon icon-moon"></span></span></span><span class="sr-only" data-theme-label>Dark mode</span></button>
+            <button class="menu-toggle" type="button" data-menu-toggle aria-controls="primary-navigation" aria-expanded="false" aria-label="Open menu"><span class="menu-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span></button>
             <?php if ($data['currentUser'] !== null): ?><a class="header-login" href="<?= $data['currentUser']['role'] === 'staff' ? '/staff' : '/dashboard' ?>"><?= $data['currentUser']['role'] === 'staff' ? 'Service workspace' : 'My banking' ?> <span aria-hidden="true">↗</span></a><?php else: ?><a class="header-login" href="/login">Online banking <span aria-hidden="true">↗</span></a><?php endif; ?>
         </div>
     </header>
@@ -85,7 +86,7 @@
             <form class="chat-form" data-chat-form><label class="sr-only" for="chat-message">Your message</label><input id="chat-message" name="message" maxlength="500" autocomplete="off" placeholder="Ask a question" required><button type="submit" aria-label="Send message">→</button></form>
             <p class="chat-footnote">Never share passwords, PINs or one-time codes here. <a href="/chat/transcript">View conversation</a></p>
         </section>
-        <button class="chat-launcher" type="button" data-chat-toggle aria-controls="chat-panel" aria-expanded="false"><img src="/assets/logo-mark.svg?v=2" alt="" width="30" height="30"><strong>Chat with us</strong></button>
+        <button class="chat-launcher" type="button" data-chat-toggle aria-controls="chat-panel" aria-expanded="false" aria-label="Chat with us"><img src="/assets/logo-mark.svg?v=2" alt="" width="30" height="30"><strong>Chat with us</strong></button>
     </aside>
 </body>
 </html>

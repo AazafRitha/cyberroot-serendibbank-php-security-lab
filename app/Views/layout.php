@@ -28,12 +28,33 @@
                 <span class="brand-name"><strong>Serendib<span>Bank</span></strong><small>Here for every tomorrow</small></span>
             </a>
             <nav class="primary-nav" aria-label="Main navigation">
-                <a href="/"<?= (parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) === '/') ? ' aria-current="page"' : '' ?>>Home</a>
-                <a href="/personal">Personal</a>
-                <a href="/cards">Cards</a>
-                <a href="/offers">Offers</a>
-                <a href="/digital">Digital banking</a>
-                <a href="/locations">Locations</a>
+                <?php
+                $currentPath = parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) ?: '/';
+                $currentPath = $currentPath === '/' ? '/' : rtrim($currentPath, '/');
+                $navLinks = [
+                    '/' => 'Home',
+                    '/personal' => 'Personal',
+                    '/cards' => 'Cards',
+                    '/offers' => 'Offers',
+                    '/digital' => 'Digital banking',
+                    '/locations' => 'Locations',
+                ];
+                $activeNav = match (true) {
+                    $currentPath === '/' => '/',
+                    str_starts_with($currentPath, '/personal'),
+                    str_starts_with($currentPath, '/savings/'),
+                    $currentPath === '/apply/account' => '/personal',
+                    str_starts_with($currentPath, '/cards'),
+                    $currentPath === '/apply/card' => '/cards',
+                    str_starts_with($currentPath, '/offers') => '/offers',
+                    str_starts_with($currentPath, '/digital') => '/digital',
+                    str_starts_with($currentPath, '/locations') => '/locations',
+                    default => null,
+                };
+                foreach ($navLinks as $path => $label):
+                ?>
+                <a href="<?= $path ?>"<?= $activeNav === $path ? ' aria-current="page"' : '' ?>><?= $label ?></a>
+                <?php endforeach; ?>
             </nav>
             <?php if ($data['currentUser'] !== null): ?><a class="header-login" href="<?= $data['currentUser']['role'] === 'staff' ? '/staff' : '/dashboard' ?>"><?= $data['currentUser']['role'] === 'staff' ? 'Service workspace' : 'My banking' ?> <span aria-hidden="true">↗</span></a><?php else: ?><a class="header-login" href="/login">Online banking <span aria-hidden="true">↗</span></a><?php endif; ?>
         </div>

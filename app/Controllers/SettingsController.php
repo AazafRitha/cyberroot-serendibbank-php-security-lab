@@ -115,11 +115,14 @@ final class SettingsController
     private function render(int $userId, ?string $error = null): void
     {
         $settings = new Settings(Database::connect());
+        $profile = $settings->user($userId);
         $flash = $_SESSION['flash_success'] ?? null;
         unset($_SESSION['flash_success']);
         View::render('settings', [
             'title' => 'Account settings | SerendibBank',
-            'profile' => $settings->user($userId),
+            'profile' => $profile,
+            'registrationDetails' => $profile !== false && $profile['customer_id'] !== null
+                ? $settings->registrationDetails((int) $profile['customer_id']) : false,
             'preferences' => $settings->preferences($userId),
             'flash' => is_string($flash) ? $flash : null,
             'error' => $error,

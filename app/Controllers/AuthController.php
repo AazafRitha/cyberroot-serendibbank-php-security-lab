@@ -6,6 +6,7 @@ namespace CyberRoot\SerendibBank\Controllers;
 
 use CyberRoot\SerendibBank\Core\Auth;
 use CyberRoot\SerendibBank\Core\Database;
+use CyberRoot\SerendibBank\Core\Identity;
 use CyberRoot\SerendibBank\Core\View;
 use CyberRoot\SerendibBank\Core\OtpOutbox;
 use CyberRoot\SerendibBank\Models\User;
@@ -20,10 +21,12 @@ final class AuthController
             return;
         }
         $success = $_SESSION['registration_success'] ?? null;
-        unset($_SESSION['registration_success']);
+        $accountNumber = $_SESSION['registration_account_number'] ?? null;
+        unset($_SESSION['registration_success'], $_SESSION['registration_account_number']);
         View::render('login', [
             'title' => 'Sign in | SerendibBank',
             'success' => is_string($success) ? $success : null,
+            'accountNumber' => is_string($accountNumber) ? $accountNumber : null,
         ]);
     }
 
@@ -50,43 +53,81 @@ final class AuthController
 
         $name = $_POST['name'] ?? null;
         $email = $_POST['email'] ?? null;
+        $identityType = $_POST['identity_type'] ?? null;
+        $identityNumber = $_POST['identity_number'] ?? null;
+        $addressLine1 = $_POST['address_line1'] ?? null;
+        $addressLine2 = $_POST['address_line2'] ?? null;
+        $city = $_POST['city'] ?? null;
+        $postalCode = $_POST['postal_code'] ?? null;
         $password = $_POST['password'] ?? null;
         $confirmation = $_POST['password_confirmation'] ?? null;
         $name = is_string($name) ? trim($name) : '';
         $email = is_string($email) ? strtolower(trim($email)) : '';
-        $safeName = strlen($name) <= 120 ? $name : '';
-        $safeEmail = strlen($email) <= 190 ? $email : '';
+        $identityType = is_string($identityType) ? $identityType : '';
+        $identityNumber = is_string($identityNumber) ? $identityNumber : '';
+        $addressLine1 = is_string($addressLine1) ? trim($addressLine1) : '';
+        $addressLine2 = is_string($addressLine2) ? trim($addressLine2) : '';
+        $city = is_string($city) ? trim($city) : '';
+        $postalCode = is_string($postalCode) ? strtoupper(trim($postalCode)) : '';
+        $form = [
+            'name' => strlen($name) <= 120 ? $name : '',
+            'email' => strlen($email) <= 190 ? $email : '',
+            'identityType' => in_array($identityType, ['nic', 'passport'], true) ? $identityType : '',
+            'addressLine1' => strlen($addressLine1) <= 160 ? $addressLine1 : '',
+            'addressLine2' => strlen($addressLine2) <= 160 ? $addressLine2 : '',
+            'city' => strlen($city) <= 80 ? $city : '',
+            'postalCode' => strlen($postalCode) <= 12 ? $postalCode : '',
+        ];
 
         $users = new User(Database::connect());
         $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
         $cooldown = $users->registrationCooldownSeconds($ip);
         if ($cooldown > 0) {
             header('Retry-After: ' . $cooldown);
-            $this->registrationFailed('Too many registration attempts. Please try again later.', $safeName, $safeEmail, 429);
+            $this->registrationFailed('Too many registration attempts. Please try again later.', $form, 429);
             return;
         }
         $users->recordRegistrationAttempt($ip);
 
+        $normalizedIdentity = Identity::normalize($identityType, $identityNumber);
         if (strlen($name) < 2 || strlen($name) > 120 ||
             strlen($email) > 190 || !filter_var($email, FILTER_VALIDATE_EMAIL) ||
+            $normalizedIdentity === null ||
+            strlen($addressLine1) < 5 || strlen($addressLine1) > 160 ||
+            strlen($addressLine2) > 160 || strlen($city) < 2 || strlen($city) > 80 ||
+            !preg_match('/^[A-Z0-9][A-Z0-9 -]{2,11}$/D', $postalCode) ||
             !is_string($password) || !is_string($confirmation) ||
             strlen($password) < 12 || strlen($password) > 256 || $password !== $confirmation) {
-            $this->registrationFailed('Check your name and email, and use a matching password of at least 12 characters.', $safeName, $safeEmail);
+            $this->registrationFailed('Check your personal details, address, and matching password of at least 12 characters.', $form);
             return;
         }
 
         if ($users->findByEmail($email) !== false) {
-            $this->registrationFailed('This email address is already registered. Please sign in instead.', $safeName, $safeEmail, 409);
+            $this->registrationFailed('This email address is already registered. Please sign in instead.', $form, 409);
+            return;
+        }
+        $fingerprint = Identity::fingerprint($identityType, $normalizedIdentity);
+        if ($users->identityExists($fingerprint)) {
+            $this->registrationFailed('This identity document is already registered. Please contact us for help.', $form, 409);
             return;
         }
         try {
-            $users->registerCustomer($name, $email, $password);
+            $accountNumber = $users->registerCustomer($name, $email, $password, [
+                'identity_type' => $identityType,
+                'identity_fingerprint' => $fingerprint,
+                'identity_last_four' => substr($normalizedIdentity, -4),
+                'address_line1' => $addressLine1,
+                'address_line2' => $addressLine2,
+                'city' => $city,
+                'postal_code' => $postalCode,
+            ]);
         } catch (PDOException $exception) {
-            $this->registrationFailed('We could not complete registration. Please try again.', $safeName, $safeEmail, 409);
+            $this->registrationFailed('We could not complete registration. Please check your details or contact us.', $form, 409);
             return;
         }
 
         $_SESSION['registration_success'] = 'Your account is ready. Sign in to continue.';
+        $_SESSION['registration_account_number'] = $accountNumber;
         header('Location: /login', true, 303);
     }
 
@@ -227,15 +268,14 @@ final class AuthController
         ]);
     }
 
-    private function registrationFailed(string $message, string $name, string $email, int $status = 422): void
+    /** @param array<string, string> $form */
+    private function registrationFailed(string $message, array $form, int $status = 422): void
     {
         http_response_code($status);
         View::render('register', [
             'title' => 'Register | SerendibBank',
             'error' => $message,
-            'name' => $name,
-            'email' => $email,
-        ]);
+        ] + $form);
     }
 
     private function maskedEmail(string $email): string

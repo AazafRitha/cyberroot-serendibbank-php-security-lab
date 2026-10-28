@@ -1,13 +1,14 @@
 """Verify customer settings and two account-security trust-boundary findings."""
 
 import http.cookiejar
+import os
 import re
 import subprocess
 import urllib.parse
 import urllib.request
 import uuid
 
-BASE = "http://127.0.0.1:8080"
+BASE = os.environ.get("APP_BASE_URL", "http://127.0.0.1:8080")
 
 
 def docker(*args):

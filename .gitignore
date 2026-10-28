@@ -12,4 +12,5 @@ coverage/
 .DS_Store
 Thumbs.db
 var/otp/
+var/identity/
 public/uploads/

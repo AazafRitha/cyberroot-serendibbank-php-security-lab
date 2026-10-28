@@ -6,5 +6,5 @@ RUN docker-php-ext-install pdo_mysql \
 COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
 WORKDIR /var/www/html
 COPY . /var/www/html
-RUN mkdir -p /var/www/html/var/otp /var/www/html/public/uploads \
-    && chown -R www-data:www-data /var/www/html/var/otp /var/www/html/public/uploads
+RUN mkdir -p /var/www/html/var/otp /var/www/html/var/identity /var/www/html/public/uploads \
+    && chown -R www-data:www-data /var/www/html/var/otp /var/www/html/var/identity /var/www/html/public/uploads

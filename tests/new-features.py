@@ -1,13 +1,14 @@
 """Exercise the new public flows and their documented trust boundaries on Compose."""
 
 import http.cookiejar
+import os
 import re
 import subprocess
 import urllib.parse
 import urllib.request
 import uuid
 
-BASE = "http://127.0.0.1:8080"
+BASE = os.environ.get("APP_BASE_URL", "http://127.0.0.1:8080")
 
 
 def visit(opener, path, fields=None):

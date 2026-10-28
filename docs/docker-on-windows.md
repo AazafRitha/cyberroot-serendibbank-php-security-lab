@@ -66,7 +66,7 @@ Think of Docker Desktop as the engine and this project's two containers as the r
    docker compose ps
    ```
 
-   Expect `web` to be **Up** and `db` to be **Up (healthy)**. Open <http://127.0.0.1:8080/> in your browser. Refresh the page after editing PHP, CSS, or JavaScript files; the project folder is shared with the web container.
+   Expect `web` to be **Up** and `db` to be **Up (healthy)**. Open the website on the `APP_PORT` set in `.env`. This laptop currently uses <http://127.0.0.1:8082/> because Burp Suite uses port 8080. Refresh the page after editing PHP, CSS, or JavaScript files; the project folder is shared with the web container.
 
 **When you finish work:** run `docker compose down` in the same folder. This stops the site and keeps your database and accounts for the next day. You can then close Docker Desktop.
 
@@ -74,7 +74,7 @@ Think of Docker Desktop as the engine and this project's two containers as the r
 
 Use `docker compose up -d --build` after changing the Dockerfile or Compose setup. You do **not** need to rebuild for ordinary PHP, CSS, or JavaScript edits. `Copy-Item .env.example .env` is a first-run step only; keep your existing `.env` and passwords.
 
-**Only when you intend to erase local database data:** `docker compose down -v` removes the MySQL volume. The seeded records return on the next start, but accounts and requests you created are lost.
+**Only when you intend to erase local database data:** `docker compose down -v` removes the MySQL and identity key volumes. The seeded records return on the next start, but accounts, requests, and registration identity fingerprints you created are lost.
 
 ## If something fails
 

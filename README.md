@@ -16,7 +16,7 @@ docker compose up --build -d
 docker compose ps
 ```
 
-Open <http://localhost:8080>. Edit `.env` to set local database passwords and change `APP_PORT` if port 8080 is occupied. New customers can register at `/register`; registration creates an empty LKR everyday account, then the customer signs in and verifies the code. The initial database also includes two customer records and sample account activity, but no sign-in accounts for those records. To test the seeded account activity and two-customer scenarios, create portal users with:
+Open the site on the port in `.env`: `APP_PORT=8080` gives <http://127.0.0.1:8080>, while `APP_PORT=8082` gives <http://127.0.0.1:8082>. This laptop uses 8082 because Burp Suite is listening on 8080. Edit `.env` to set local database passwords. New customers can register at `/register` with a name, email, NIC or passport number, address, and password. Registration assigns a unique account number and creates an empty LKR everyday account; the customer then signs in and verifies the code. Use fictional identity and address details for this project. The initial database also includes two customer records and sample account activity, but no sign-in accounts for those records. To test the seeded account activity and two-customer scenarios, create portal users with:
 
 ```powershell
 docker compose exec web php scripts/create-user.php 'customer1@example.test' 'N. Perera' customer 1
@@ -30,9 +30,9 @@ Save the generated passwords outside Git. Sign in at `/login`. For local develop
 docker compose exec web php scripts/read-otp.php 'customer1@example.test'
 ```
 
-To reset a password, run `docker compose exec web php scripts/reset-password.php 'customer1@example.test'`. Use `docker compose down` to stop the containers while keeping MySQL data. `docker compose down -v` removes local database data and rebuilds it from `database/init.sql` on the next start.
+To reset a password, run `docker compose exec web php scripts/reset-password.php 'customer1@example.test'`. Use `docker compose down` to stop the containers while keeping MySQL data. `docker compose down -v` removes local database data and the identity fingerprint key; it rebuilds the seed data on the next start. Back up the `identity_keys` volume together with the database if you need to restore registrations.
 
-If you use Burp Suite with the local site, follow the [Windows Burp setup](docs/burp-on-windows.md). The site uses port 8080; put Burp's proxy listener on a different port such as 8081.
+If you use Burp Suite with the local site, follow the [Windows Burp setup](docs/burp-on-windows.md). The site and Burp need different ports. For example, keep Burp's default proxy on 8080 and set `APP_PORT=8082` in `.env`, or keep the site on 8080 and move Burp to 8081.
 
 ## Project layout
 
@@ -49,3 +49,5 @@ docs/      Setup, architecture, and Git workflow
 The [architecture notes](docs/architecture.md) describe the application structure. The [Git workflow](docs/git-workflow.md) covers local changes and pushing them to GitHub. SQL files in `database/migrations/` are applied when the web container starts, including on an existing database volume. `.env`, generated passwords, and customer records belong outside Git.
 
 The included Compose file binds the website to `127.0.0.1` for local development. A public server needs a separate deployment configuration, TLS, operational monitoring, backups, and a real verification delivery service.
+
+Registration stores a keyed fingerprint and last four characters of the normalized identity number rather than the full number. The address is stored in the database. The fingerprint key lives in a separate Docker volume and must remain paired with its database. This local flow does not verify a real person or document, so do not use real identity information or treat it as a public banking onboarding process.

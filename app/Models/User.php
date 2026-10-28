@@ -23,7 +23,15 @@ final class User
         return $statement->fetch();
     }
 
-    public function registerCustomer(string $name, string $email, string $password): void
+    public function identityExists(string $fingerprint): bool
+    {
+        $statement = $this->pdo->prepare('SELECT 1 FROM customer_registration_details WHERE identity_fingerprint = ? LIMIT 1');
+        $statement->execute([$fingerprint]);
+        return $statement->fetchColumn() !== false;
+    }
+
+    /** @param array<string, string> $details */
+    public function registerCustomer(string $name, string $email, string $password, array $details): string
     {
         $this->pdo->beginTransaction();
         try {
@@ -42,15 +50,34 @@ final class User
                 'password_hash' => password_hash($password, PASSWORD_DEFAULT),
             ]);
 
+            $identity = $this->pdo->prepare(
+                'INSERT INTO customer_registration_details
+                 (customer_id, identity_type, identity_fingerprint, identity_last_four,
+                  address_line1, address_line2, city, postal_code)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+            );
+            $identity->execute([
+                $customerId,
+                $details['identity_type'],
+                $details['identity_fingerprint'],
+                $details['identity_last_four'],
+                $details['address_line1'],
+                $details['address_line2'] ?: null,
+                $details['city'],
+                $details['postal_code'],
+            ]);
+
+            $accountNumber = '27' . (string) random_int(1000000000, 9999999999);
             $account = $this->pdo->prepare(
                 "INSERT INTO accounts (customer_id, account_number, account_type, currency, balance)
                  VALUES (:customer_id, :account_number, 'Everyday account', 'LKR', 0.00)"
             );
             $account->execute([
                 'customer_id' => $customerId,
-                'account_number' => '27' . (string) random_int(1000000000, 9999999999),
+                'account_number' => $accountNumber,
             ]);
             $this->pdo->commit();
+            return $accountNumber;
         } catch (Throwable $exception) {
             if ($this->pdo->inTransaction()) {
                 $this->pdo->rollBack();

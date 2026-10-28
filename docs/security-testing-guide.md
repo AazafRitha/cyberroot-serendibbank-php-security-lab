@@ -4,12 +4,12 @@ This repository intentionally contains web and API security weaknesses for autho
 
 ## Prepare a local test
 
-1. Start the site with `docker compose up --build -d`. Confirm that `docker compose ps` shows a healthy database and a running web service. The local URL is `http://127.0.0.1:8080`.
+1. Start the site with `docker compose up --build -d`. Confirm that `docker compose ps` shows a healthy database and a running web service. Use the local port in `.env`; this laptop currently uses `http://127.0.0.1:8082` while Burp listens on 8080. If you run the Python checks with a nondefault port, set `APP_BASE_URL` to that site URL first.
 2. Create two customer logins, one linked to customer 1 and one to customer 2, plus one staff login using the commands in [README](../README.md#run-locally). Save their generated passwords privately. Read local verification codes with `docker compose exec web php scripts/read-otp.php <email>`.
 3. Use separate browser profiles for the two customers and staff. Record the exact request, response, role, and record identifier for each result. Use only test data.
 4. Run `python tests/smoke.py`, `python tests/new-features.py`, and `python tests/settings-workflows.py` for baseline checks. These create and remove their own temporary users and enquiries. Some findings below require browser or proxy verification.
 
-New customers can also use `/register` to create a profile and an empty LKR everyday account. For a registration baseline, confirm that a missing CSRF token is rejected, passwords must match, a duplicate email is rejected, and the new customer can complete sign in and see the new account. Run `python tests/registration.py` to check this flow. Registration does not link a new user to the two seeded customer records used in the object-access scenarios.
+New customers can also use `/register` to create a profile and an empty LKR everyday account. Use invented NIC or passport numbers and address details only. For a registration baseline, confirm that a missing CSRF token is rejected, passwords must match, duplicate email and identity documents are rejected, a unique account number is assigned, and the new customer can complete sign in and see the new account. Run `python tests/registration.py` to check this flow. Registration does not link a new user to the two seeded customer records used in the object-access scenarios.
 
 ## Recommended tools
 

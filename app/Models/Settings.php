@@ -32,6 +32,18 @@ final class Settings
         return $statement->fetch() ?: ['account_alerts' => 1, 'product_updates' => 0, 'preferred_contact' => 'email'];
     }
 
+    /** @return array<string, mixed>|false */
+    public function registrationDetails(int $customerId): array|false
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT identity_type, identity_last_four, address_line1, address_line2, city, postal_code,
+                    (SELECT account_number FROM accounts WHERE customer_id = d.customer_id ORDER BY id LIMIT 1) AS account_number
+             FROM customer_registration_details AS d WHERE customer_id = ? LIMIT 1'
+        );
+        $statement->execute([$customerId]);
+        return $statement->fetch();
+    }
+
     public function saveProfile(int $userId, string $name, string $email, string $role): void
     {
         $statement = $this->pdo->prepare(

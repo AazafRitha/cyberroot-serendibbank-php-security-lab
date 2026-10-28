@@ -9,6 +9,7 @@ use CyberRoot\SerendibBank\Core\Database;
 use CyberRoot\SerendibBank\Core\View;
 use CyberRoot\SerendibBank\Core\OtpOutbox;
 use CyberRoot\SerendibBank\Models\User;
+use PDOException;
 
 final class AuthController
 {
@@ -18,7 +19,75 @@ final class AuthController
             header('Location: ' . (Auth::user()['role'] === 'staff' ? '/staff' : '/dashboard'), true, 303);
             return;
         }
-        View::render('login', ['title' => 'Sign in | SerendibBank']);
+        $success = $_SESSION['registration_success'] ?? null;
+        unset($_SESSION['registration_success']);
+        View::render('login', [
+            'title' => 'Sign in | SerendibBank',
+            'success' => is_string($success) ? $success : null,
+        ]);
+    }
+
+    public function showRegister(): void
+    {
+        if (Auth::user() !== null) {
+            header('Location: ' . (Auth::user()['role'] === 'staff' ? '/staff' : '/dashboard'), true, 303);
+            return;
+        }
+        View::render('register', ['title' => 'Register | SerendibBank']);
+    }
+
+    public function register(): void
+    {
+        if (Auth::user() !== null) {
+            header('Location: ' . (Auth::user()['role'] === 'staff' ? '/staff' : '/dashboard'), true, 303);
+            return;
+        }
+        if (!Auth::verifyCsrf($_POST['_csrf'] ?? null)) {
+            http_response_code(400);
+            View::render('error', ['title' => 'Please try again', 'message' => 'Your session has changed. Reload the registration page and try again.']);
+            return;
+        }
+
+        $name = $_POST['name'] ?? null;
+        $email = $_POST['email'] ?? null;
+        $password = $_POST['password'] ?? null;
+        $confirmation = $_POST['password_confirmation'] ?? null;
+        $name = is_string($name) ? trim($name) : '';
+        $email = is_string($email) ? strtolower(trim($email)) : '';
+        $safeName = strlen($name) <= 120 ? $name : '';
+        $safeEmail = strlen($email) <= 190 ? $email : '';
+
+        $users = new User(Database::connect());
+        $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+        $cooldown = $users->registrationCooldownSeconds($ip);
+        if ($cooldown > 0) {
+            header('Retry-After: ' . $cooldown);
+            $this->registrationFailed('Too many registration attempts. Please try again later.', $safeName, $safeEmail, 429);
+            return;
+        }
+        $users->recordRegistrationAttempt($ip);
+
+        if (strlen($name) < 2 || strlen($name) > 120 ||
+            strlen($email) > 190 || !filter_var($email, FILTER_VALIDATE_EMAIL) ||
+            !is_string($password) || !is_string($confirmation) ||
+            strlen($password) < 12 || strlen($password) > 256 || $password !== $confirmation) {
+            $this->registrationFailed('Check your name and email, and use a matching password of at least 12 characters.', $safeName, $safeEmail);
+            return;
+        }
+
+        if ($users->findByEmail($email) !== false) {
+            $this->registrationFailed('This email address is already registered. Please sign in instead.', $safeName, $safeEmail, 409);
+            return;
+        }
+        try {
+            $users->registerCustomer($name, $email, $password);
+        } catch (PDOException $exception) {
+            $this->registrationFailed('We could not complete registration. Please try again.', $safeName, $safeEmail, 409);
+            return;
+        }
+
+        $_SESSION['registration_success'] = 'Your account is ready. Sign in to continue.';
+        header('Location: /login', true, 303);
     }
 
     public function login(): void
@@ -154,6 +223,17 @@ final class AuthController
         View::render('login', [
             'title' => 'Sign in | SerendibBank',
             'error' => $detail ?? 'We could not sign you in with those details.',
+            'email' => $email,
+        ]);
+    }
+
+    private function registrationFailed(string $message, string $name, string $email, int $status = 422): void
+    {
+        http_response_code($status);
+        View::render('register', [
+            'title' => 'Register | SerendibBank',
+            'error' => $message,
+            'name' => $name,
             'email' => $email,
         ]);
     }

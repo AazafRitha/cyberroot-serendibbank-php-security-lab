@@ -2,7 +2,7 @@
 
 ![SerendibBank logo](public/assets/logo.svg)
 
-SerendibBank is a PHP and MySQL website with public product pages, product information documents, a savings calculator, branch map, general enquiry form, and an online banking portal. It includes customer sign in, verification, account activity, transfers, account and card applications, customer account settings, support requests with attachments, a digital assistant, and a staff workspace. The layout works across desktop and mobile screens.
+SerendibBank is a PHP and MySQL website with public product pages, product information documents, a savings calculator, branch map, general enquiry form, and an online banking portal. It includes customer registration, sign in, verification, account activity, transfers, account and card applications, customer account settings, support requests with attachments, a digital assistant, and a staff workspace. The layout works across desktop and mobile screens.
 
 This repository is for authorized security learning. See the [security testing guide](docs/security-testing-guide.md) for the finding inventory and validation steps. The site itself presents normal banking journeys.
 
@@ -16,7 +16,7 @@ docker compose up --build -d
 docker compose ps
 ```
 
-Open <http://localhost:8080>. Edit `.env` to set local database passwords and change `APP_PORT` if port 8080 is occupied. The initial database includes two customer records and sample account activity, but no sign-in accounts. Create portal users with:
+Open <http://localhost:8080>. Edit `.env` to set local database passwords and change `APP_PORT` if port 8080 is occupied. New customers can register at `/register`; registration creates an empty LKR everyday account, then the customer signs in and verifies the code. The initial database also includes two customer records and sample account activity, but no sign-in accounts for those records. To test the seeded account activity and two-customer scenarios, create portal users with:
 
 ```powershell
 docker compose exec web php scripts/create-user.php 'customer1@example.test' 'N. Perera' customer 1
@@ -31,6 +31,8 @@ docker compose exec web php scripts/read-otp.php 'customer1@example.test'
 ```
 
 To reset a password, run `docker compose exec web php scripts/reset-password.php 'customer1@example.test'`. Use `docker compose down` to stop the containers while keeping MySQL data. `docker compose down -v` removes local database data and rebuilds it from `database/init.sql` on the next start.
+
+If you use Burp Suite with the local site, follow the [Windows Burp setup](docs/burp-on-windows.md). The site uses port 8080; put Burp's proxy listener on a different port such as 8081.
 
 ## Project layout
 

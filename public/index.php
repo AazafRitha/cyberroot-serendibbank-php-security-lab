@@ -57,6 +57,8 @@ $router->get('/documents/view', [$documents, 'view']);
 $auth = new AuthController();
 $router->get('/login', [$auth, 'showLogin']);
 $router->post('/login', [$auth, 'login']);
+$router->get('/register', [$auth, 'showRegister']);
+$router->post('/register', [$auth, 'register']);
 $router->get('/verify', [$auth, 'showOtp']);
 $router->post('/verify', [$auth, 'verifyOtp']);
 $router->post('/logout', [$auth, 'logout']);

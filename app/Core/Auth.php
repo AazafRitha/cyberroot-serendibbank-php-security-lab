@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CyberRoot\SerendibBank\Core;
 
+use CyberRoot\SerendibBank\Models\UserSession;
+
 final class Auth
 {
     private const IDLE_SECONDS = 1800;
@@ -53,10 +55,21 @@ final class Auth
                     session_id('');
                     session_start();
                 } else {
-                    $_SESSION['auth']['last_seen'] = $now;
-                    $_SESSION['auth']['customer_id'] = $record['customer_id'] === null ? null : (int) $record['customer_id'];
-                    $_SESSION['auth']['name'] = (string) $record['display_name'];
-                    $_SESSION['auth']['role'] = (string) $record['role'];
+                    $sessions = new UserSession(Database::connect());
+                    $sessionId = (int) ($auth['session_record_id'] ?? 0);
+                    $session = $sessions->find($sessionId, (int) $auth['id'], session_id());
+                    // A remembered-device cookie takes precedence over a remote revocation.
+                    if ($session === false || ($session['revoked_at'] !== null && ($_COOKIE['sb_device_trust'] ?? '') !== '1')) {
+                        self::logout();
+                        session_id('');
+                        session_start();
+                    } else {
+                        $sessions->touch($sessionId);
+                        $_SESSION['auth']['last_seen'] = $now;
+                        $_SESSION['auth']['customer_id'] = $record['customer_id'] === null ? null : (int) $record['customer_id'];
+                        $_SESSION['auth']['name'] = (string) $record['display_name'];
+                        $_SESSION['auth']['role'] = (string) $record['role'];
+                    }
                 }
             }
         }
@@ -69,7 +82,7 @@ final class Auth
     }
 
     /** @param array<string, mixed> $user */
-    public static function beginOtp(array $user, string $code): void
+    public static function beginOtp(array $user, string $code, bool $rememberDevice = false): void
     {
         $afterLogin = $_SESSION['after_login'] ?? null;
         session_regenerate_id(true);
@@ -84,6 +97,7 @@ final class Auth
             'code_hash' => hash('sha256', $code),
             'expires_at' => time() + 300,
             'attempts' => 0,
+            'remember_device' => $rememberDevice,
         ];
         self::csrfToken();
     }
@@ -102,8 +116,15 @@ final class Auth
     /** @param array<string, mixed> $user */
     public static function login(array $user): void
     {
+        $rememberDevice = !empty($_SESSION['pending_login']['remember_device']);
         session_regenerate_id(true);
         $_SESSION = [];
+        $sessions = new UserSession(Database::connect());
+        $recordId = $sessions->create(
+            (int) $user['id'], session_id(),
+            (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'),
+            (string) ($_SERVER['HTTP_USER_AGENT'] ?? 'Unknown browser')
+        );
         $_SESSION['auth'] = [
             'id' => (int) $user['id'],
             'customer_id' => $user['customer_id'] === null ? null : (int) $user['customer_id'],
@@ -112,13 +133,20 @@ final class Auth
             'session_version' => (int) $user['session_version'],
             'signed_in_at' => time(),
             'last_seen' => time(),
+            'session_record_id' => $recordId,
         ];
+        self::deviceCookie($rememberDevice);
         self::csrfToken();
     }
 
     public static function logout(): void
     {
+        $auth = $_SESSION['auth'] ?? null;
+        if (is_array($auth) && isset($auth['session_record_id'], $auth['id'])) {
+            (new UserSession(Database::connect()))->revoke((int) $auth['session_record_id'], (int) $auth['id']);
+        }
         $_SESSION = [];
+        self::deviceCookie(false);
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
             setcookie(session_name(), '', [
@@ -130,6 +158,18 @@ final class Auth
             ]);
         }
         session_destroy();
+    }
+
+    private static function deviceCookie(bool $remember): void
+    {
+        $params = session_get_cookie_params();
+        setcookie('sb_device_trust', $remember ? '1' : '', [
+            'expires' => $remember ? time() + 30 * 86400 : time() - 3600,
+            'path' => '/',
+            'secure' => $params['secure'],
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
     }
 
     public static function csrfToken(): string

@@ -67,7 +67,7 @@ final class ManagementController
             $this->loginError('The verification code could not be sent. Please try again later.', 503);
             return;
         }
-        Auth::beginOtp($user, $code);
+        Auth::beginOtp($user, $code, ($_POST['remember_device'] ?? '') === '1');
         header('Location: /verify', true, 303);
     }
 

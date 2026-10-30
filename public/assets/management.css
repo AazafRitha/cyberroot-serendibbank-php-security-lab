@@ -12,3 +12,6 @@
 .management-credential code{font-size:.85rem;word-break:break-all}
 .management-credential small{color:var(--muted)}
 @media(max-width:740px){.management-create label{min-width:100%}.management-create button{width:100%}.management-review-form input{width:120px}}
+.management-remember{display:flex!important;align-items:center;gap:10px;font-size:.75rem!important}.management-form .management-remember input{width:16px!important;height:16px;min-height:16px;margin:0;accent-color:var(--wine)}
+.management-session-list{display:grid;gap:12px}.management-session-card{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:21px;background:#fff;border:1px solid var(--line)}.management-session-card strong{font-size:.8rem;overflow-wrap:anywhere}.management-session-card .management-state{margin-left:9px}.management-session-card p,.management-session-card small{display:block;color:var(--muted);font-size:.7rem;margin:8px 0 0}.management-session-card button{border:1px solid var(--wine);background:#fff;color:var(--wine);padding:9px 12px;font-size:.7rem;font-weight:800;cursor:pointer;white-space:nowrap}.management-session-card button:hover{background:var(--wine);color:#fff}
+@media(max-width:740px){.management-session-card{align-items:flex-start;flex-direction:column}.management-session-card form,.management-session-card button{width:100%}}

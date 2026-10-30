@@ -123,3 +123,15 @@
 .transfer-aside>div{padding:30px 33px}
 @media(max-width:900px){.settings-grid{grid-template-columns:1fr}.settings-aside{display:grid;grid-template-columns:200px 1fr}.settings-aside>img{height:100%}.settings-aside-detail{grid-column:1/-1}}
 @media(max-width:650px){.settings-hero-inner{grid-template-columns:1fr;gap:0}.settings-hero-inner>div{padding:48px 0 20px}.settings-hero img{height:220px;margin-bottom:25px}.settings-nav{overflow-x:auto;white-space:nowrap;gap:16px}.settings-panel-header{gap:12px}.settings-aside{display:block}.settings-aside>img{height:220px}.dashboard-settings-link{display:block}.dashboard-settings-link .text-link{display:inline-block;margin-top:12px}.transfer-aside>div{padding:23px}}
+.session-remember{display:flex!important;align-items:center;gap:10px;margin:8px 0 3px;font-size:.78rem;font-weight:600}
+.session-remember input{width:16px!important;height:16px;min-height:16px!important;margin:0;accent-color:var(--burgundy)}
+.session-page-head{display:flex;justify-content:space-between;align-items:center;gap:20px;margin:0 0 24px}
+.session-page-head>span{color:var(--muted);font-size:.8rem;font-weight:700}
+.session-page-head .button{font-size:.75rem;padding:12px 17px}
+.session-list{display:grid;gap:13px;padding-bottom:65px}
+.session-card{display:flex;align-items:center;gap:18px;background:#fff;border:1px solid var(--line);padding:22px 24px}
+.session-icon{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#f4e9df;color:var(--burgundy);font-size:1.3rem}
+.session-details{flex:1;min-width:0}.session-title{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.session-title strong{font-size:.83rem;overflow-wrap:anywhere}.session-title span{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#306c49;background:#e7f3eb;padding:5px 7px}.session-title .session-ended{color:#9a3c40;background:#fff0ef}
+.session-details p,.session-details small{display:block;color:var(--muted);font-size:.7rem;line-height:1.5;margin:8px 0 0}.session-card button{border:1px solid var(--burgundy);background:#fff;color:var(--burgundy);padding:9px 12px;font-size:.7rem;font-weight:800;white-space:nowrap;cursor:pointer}.session-card button:hover{background:var(--burgundy);color:#fff}
+.session-empty{background:#fff;border:1px solid var(--line);padding:30px;color:var(--muted)}
+@media(max-width:650px){.session-page-head{align-items:flex-start;flex-direction:column}.session-card{align-items:flex-start;flex-wrap:wrap;padding:18px}.session-card form{width:100%}.session-card button{width:100%}}

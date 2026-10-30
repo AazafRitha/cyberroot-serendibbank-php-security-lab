@@ -46,6 +46,8 @@ The workspace has its own sign-in and code verification. The role and task split
 
 Account opening creates a zero-balance LKR everyday or savings account for an existing client. A frozen account cannot be used in the normal or quick transfer flow. A ledger request never changes a balance until a different administrator approves it; approval posts one transaction and updates the account balance in one database transaction. A debit with insufficient funds is refused. These are operational training flows, not a complete core banking ledger or reconciliation system. Changes to a user's role or active status invalidate that user's existing session. The original `/staff` route remains available for the existing local workflows.
 
+Customers can review and end their signed-in devices from **Account settings → Devices & sessions**. Staff can do the same from **My sessions** in the management workspace. A sign-in creates a server-side session record; ending a session marks that record revoked. The repository's [security testing guide](security-testing-guide.md) describes the intentional session-control finding. The website itself uses ordinary banking language.
+
 Create the first super administrator from a trusted VM terminal, replacing the example address with the administrator's real inbox:
 
 ```bash

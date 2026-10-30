@@ -199,7 +199,7 @@ final class AuthController
             ]);
             return;
         }
-        Auth::beginOtp($user, $code);
+        Auth::beginOtp($user, $code, ($_POST['remember_device'] ?? '') === '1');
         header('Location: /verify', true, 303);
     }
 

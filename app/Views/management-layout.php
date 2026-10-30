@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#32151f">
     <title><?= $escape($data['title'] ?? 'SerendibBank Management') ?></title>
     <link rel="icon" type="image/svg+xml" href="/assets/logo-mark.svg">
-    <link rel="stylesheet" href="/assets/management.css?v=2">
+    <link rel="stylesheet" href="/assets/management.css?v=3">
 </head>
 <body class="management-body">
     <a class="management-skip" href="#content">Skip to content</a>

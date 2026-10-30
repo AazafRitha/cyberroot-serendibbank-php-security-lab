@@ -2,7 +2,7 @@
 
 This guide uses the repository's `compose.vm.yaml`. It builds the PHP site into a container, keeps MySQL in a private Docker network, and binds the website only to the VM's `127.0.0.1:8082`. A reverse proxy can later make the site reachable through a domain with HTTPS. The Windows laptop's Docker Desktop is not required on the Ubuntu VM.
 
-Use an isolated VM created for this project. Keep it away from production systems and sensitive networks, use fictional records only, and agree on the testing scope before inviting others. The application intentionally contains vulnerabilities. A Docker container is not a security boundary for a publicly attacked VM.
+Use an isolated VM created for this project. Keep it away from production systems and sensitive networks, use fictional records only, and agree on the testing scope before inviting others. The application intentionally contains vulnerabilities. A Docker container is not a security boundary for a publicly attacked VM. If the VM belongs to an internal environment, place it in a segmented network with no route to internal services; publish only through the approved edge proxy or firewall.
 
 ## 1. Connect to Ubuntu
 
@@ -130,5 +130,8 @@ The MySQL, upload, OTP, and identity-key volumes survive `docker compose down`. 
 ### Before inviting public testers
 
 - The default OTP transport writes a code to a local Docker volume. Set up and verify company SMTP delivery before inviting remote users; otherwise they cannot receive their sign-in codes.
+- Use a dedicated, limited SMTP sending identity or relay for this VM. Do not give an intentionally vulnerable server a credential that can read company mail or access other internal systems.
 - The site is intentionally vulnerable. Keep the VM isolated from other systems, never use real identity or financial information, set clear testing scope and contact details, monitor the VM, and have a way to stop access or restore a snapshot.
 - Do not reuse this VM for any other service. The public banking-like interface does not verify real customers or documents.
+- Confirm that registration, SMTP sign-in codes, customer and management sign-in, device revocation, and the agreed security scenarios work on the VM with fictional accounts before publishing its DNS names.
+- Publish the exact allowed hostnames and test scope. Keep a VM snapshot, a recovery procedure, and a contact route ready so the environment can be restored after destructive tests.

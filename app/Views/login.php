@@ -9,6 +9,7 @@
             <input type="hidden" name="_csrf" value="<?= $escape($data['csrfToken']) ?>">
             <label for="login-email">Email address</label><input id="login-email" name="email" type="email" autocomplete="username" maxlength="190" required value="<?= $escape($data['email'] ?? '') ?>">
             <label for="login-password">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password" required>
+            <label class="session-remember"><input type="checkbox" name="remember_device" value="1"><span>Remember this device</span></label>
             <button class="button" type="submit">Sign in <span aria-hidden="true">→</span></button>
         </form>
         <div class="form-aside"><strong>New to SerendibBank?</strong><p>Create an online banking profile and an everyday account.</p><a class="text-link" href="/register">Register now <span aria-hidden="true">↗</span></a></div>

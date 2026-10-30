@@ -2,7 +2,7 @@
 
 ![SerendibBank logo](public/assets/logo.svg)
 
-SerendibBank is a PHP and MySQL website with public product pages, product information documents, a savings calculator, branch map, general enquiry form, and an online banking portal. It includes customer registration, sign in, verification, account activity, transfers, account and card applications, customer account settings, support requests with attachments, a digital assistant, and a separate operations workspace for staff, administrators, and super administrators. The layout works across desktop and mobile screens.
+SerendibBank is a PHP and MySQL website with public product pages, product information documents, a savings calculator, branch map, general enquiry form, and an online banking portal. It includes customer registration, sign in, verification, account activity, transfers, account and card applications, customer account settings, signed-in device management, support requests with attachments, a digital assistant, and a separate operations workspace for staff, administrators, and super administrators. The layout works across desktop and mobile screens.
 
 This repository is for authorized security learning. See the [security testing guide](docs/security-testing-guide.md) for the finding inventory and validation steps. The site itself presents normal banking journeys.
 

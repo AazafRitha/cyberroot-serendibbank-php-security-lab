@@ -8,7 +8,7 @@
     <title><?= $escape($data['title'] ?? 'SerendibBank') ?></title>
     <script>try { document.documentElement.dataset.theme = localStorage.getItem('serendib-theme') === 'dark' ? 'dark' : 'light'; } catch { document.documentElement.dataset.theme = 'light'; }</script>
     <link rel="stylesheet" href="/assets/style.css?v=7">
-    <link rel="stylesheet" href="/assets/portal.css">
+    <link rel="stylesheet" href="/assets/portal.css?v=2">
     <link rel="stylesheet" href="/assets/chat.css?v=3">
     <link rel="stylesheet" href="/assets/theme.css?v=3">
     <link rel="stylesheet" href="/assets/home-preview.css?v=1">

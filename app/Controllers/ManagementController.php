@@ -248,10 +248,6 @@ final class ManagementController
         if ($actor === null || !$this->checkCsrf()) {
             return;
         }
-        if (!in_array($actor['role'], ['admin', 'super_admin'], true)) {
-            $this->forbidden();
-            return;
-        }
         $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
         $status = $_POST['status'] ?? null;
         if (!$id || !in_array($status, ['active', 'frozen'], true)) {

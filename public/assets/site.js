@@ -178,6 +178,35 @@ if (lookupForm) {
   });
 }
 
+const contactLookup = document.querySelector('[data-contact-lookup]');
+if (contactLookup) {
+  const status = contactLookup.querySelector('[data-contact-lookup-status]');
+  const enquiry = document.querySelector('form[action="/support/contact"]');
+  contactLookup.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const accountNumber = new FormData(contactLookup).get('account_number');
+    status.textContent = 'Finding your details…';
+    try {
+      const response = await fetch(`/api/v1/contact/profile?account_number=${encodeURIComponent(accountNumber)}`);
+      const payload = await response.json();
+      if (!response.ok) {
+        status.textContent = payload.error || 'Account could not be found.';
+        return;
+      }
+      if (enquiry) {
+        enquiry.elements.namedItem('name').value = payload.contact.display_name || '';
+        enquiry.elements.namedItem('email').value = payload.contact.email || '';
+        enquiry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      status.textContent = payload.contact.email
+        ? 'Your contact details have been added to the enquiry form.'
+        : 'We found the account. Please enter your preferred contact email in the enquiry form.';
+    } catch {
+      status.textContent = 'Contact details are temporarily unavailable.';
+    }
+  });
+}
+
 const cooldown = document.querySelector('[data-login-cooldown]');
 if (cooldown) {
   let remaining = Number(cooldown.dataset.loginCooldown) || 0;

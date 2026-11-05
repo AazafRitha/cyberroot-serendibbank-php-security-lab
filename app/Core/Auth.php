@@ -24,6 +24,7 @@ final class Auth
         ini_set('session.use_strict_mode', '1');
         ini_set('session.use_only_cookies', '1');
         ini_set('session.use_trans_sid', '0');
+        ini_set('session.gc_maxlifetime', (string) (self::MAX_SECONDS + 3600));
         session_name('serendib_session');
         session_set_cookie_params([
             'lifetime' => 0,
@@ -39,7 +40,8 @@ final class Auth
             $now = time();
             $idle = $now - (int) ($auth['last_seen'] ?? 0);
             $age = $now - (int) ($auth['signed_in_at'] ?? 0);
-            if ($idle > self::IDLE_SECONDS || $age > self::MAX_SECONDS) {
+            // Customer sessions retain their absolute limit but do not apply the staff idle limit.
+            if ((($auth['role'] ?? '') !== 'customer' && $idle > self::IDLE_SECONDS) || $age > self::MAX_SECONDS) {
                 self::logout();
                 session_id('');
                 session_start();

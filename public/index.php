@@ -133,6 +133,7 @@ $router->get('/api/v1/accounts/transactions', [$api, 'accountTransactions']);
 $router->get('/api/v1/support/requests', [$api, 'supportRequest']);
 $router->post('/api/v1/applications/review', [$api, 'reviewApplication']);
 $router->get('/api/v1/beneficiaries/lookup', [$api, 'beneficiaryLookup']);
+$router->get('/api/v1/contact/profile', [$api, 'contactProfile']);
 $router->post('/api/v1/transfers/quick', [$api, 'quickTransfer']);
 
 try {

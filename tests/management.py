@@ -108,11 +108,6 @@ try:
     }, management=True)
     assert status == 200 and "User access updated" in super_dashboard
 
-    status, _, _ = visit(staff, "/accounts/status", {
-        "_csrf": csrf(staff_dashboard), "id": "1", "status": "frozen",
-    }, management=True)
-    assert status == 403
-
     status, _, _ = visit(admin, "/users/update", {
         "_csrf": csrf(dashboard), "id": str(new_user("staff")[2]), "action": "admin",
     }, management=True)
@@ -129,6 +124,22 @@ try:
         '$s=$p->prepare("SELECT id FROM accounts WHERE account_number=?"); $s->execute([$argv[1]]); echo $s->fetchColumn();',
         "--", number,
     ))
+    assert 'action="/accounts/status"' not in staff_dashboard
+    status, _, staff_dashboard = visit(staff, "/accounts/status", {
+        "_csrf": csrf(staff_dashboard), "id": str(created_account_id), "status": "frozen",
+    }, management=True)
+    assert status == 200 and "Account status updated" in staff_dashboard
+    frozen = docker(
+        "php", "-r",
+        'require "app/bootstrap.php"; $p=\\CyberRoot\\SerendibBank\\Core\\Database::connect(); '
+        '$s=$p->prepare("SELECT status FROM accounts WHERE id=?"); $s->execute([$argv[1]]); echo $s->fetchColumn();',
+        "--", str(created_account_id),
+    )
+    assert frozen == "frozen"
+    status, _, dashboard = visit(admin, "/accounts/status", {
+        "_csrf": csrf(dashboard), "id": str(created_account_id), "status": "active",
+    }, management=True)
+    assert status == 200 and "Account status updated" in dashboard
     status, _, staff_dashboard = visit(staff, "/ledger/request", {
         "_csrf": csrf(staff_dashboard), "account_id": str(created_account_id),
         "direction": "credit", "amount": "12.50", "reason": "Operations test credit",

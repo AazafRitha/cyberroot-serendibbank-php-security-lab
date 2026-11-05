@@ -1,6 +1,7 @@
 """Verify browser registration, duplicate handling, and first sign in."""
 
 import http.cookiejar
+import json
 import os
 import re
 import subprocess
@@ -64,6 +65,14 @@ try:
     status, url, login = visit(opener, "/register", registration_fields(token, EMAIL))
     assert status == 200 and url.endswith("/login") and "account is ready" in login
     account_number = re.search(r"Your account number: <strong>(27[0-9]{10})</strong>", login).group(1)
+
+    anonymous = urllib.request.build_opener()
+    status, _, profile_response = visit(anonymous, f"/api/v1/contact/profile?account_number={account_number}")
+    assert status == 200
+    profile = json.loads(profile_response)["contact"]
+    assert profile["email"] == EMAIL and profile["address_line1"] == "15 Lake Road"
+    assert profile["identity_last_four"] == DOCUMENT_NUMBER[-4:]
+    assert DOCUMENT_NUMBER not in profile_response
 
     status, _, form = visit(opener, "/register")
     assert status == 200

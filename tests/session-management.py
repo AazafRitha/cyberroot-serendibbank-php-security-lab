@@ -77,11 +77,21 @@ def record_id(session_cookie):
     ))
 
 
+def age_session(session_cookie, field, seconds):
+    docker(
+        "php", "-r",
+        'ini_set("session.gc_probability", "0"); session_name("serendib_session"); '
+        'session_id($argv[1]); session_start(); '
+        '$_SESSION["auth"][$argv[2]] = time() - (int) $argv[3]; session_write_close();',
+        "--", session_cookie, field, str(seconds),
+    )
+
+
 created = []
 try:
     email, password = new_user("customer", 1)
     created.append(email)
-    first, _, _ = sign_in(email, password)
+    first, _, first_cookie = sign_in(email, password)
     second, _, second_cookie = sign_in(email, password)
     forged, _, forged_cookie = sign_in(email, password)
     remembered, remembered_jar, remembered_cookie = sign_in(email, password, remember=True)
@@ -106,12 +116,22 @@ try:
     assert status == 200 and url.endswith("/sessions") and "Current device" in page
     assert "Ended" in page
 
+    age_session(first_cookie, "last_seen", 1900)
+    status, url, page = visit(first, "/sessions")
+    assert status == 200 and url.endswith("/sessions") and "Current device" in page
+    age_session(first_cookie, "signed_in_at", 28900)
+    status, url, _ = visit(first, "/sessions")
+    assert status == 200 and url.endswith("/login")
+
     staff_email, staff_password = new_user("staff")
     created.append(staff_email)
-    staff, _, _ = sign_in(staff_email, staff_password, management=True)
+    staff, _, staff_cookie = sign_in(staff_email, staff_password, management=True)
     status, url, page = visit(staff, "/sessions", management=True)
     assert status == 200 and url.endswith("/sessions") and "Recent sessions" in page
-    print("Session listing, revocation, remembered-device bypass, and management access passed.")
+    age_session(staff_cookie, "last_seen", 1900)
+    status, url, _ = visit(staff, "/sessions", management=True)
+    assert status == 200 and url.endswith("/login")
+    print("Session revocation, customer idle timeout gap, staff timeout, and absolute timeout passed.")
 finally:
     for email in created:
         docker(

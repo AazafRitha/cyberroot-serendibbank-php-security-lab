@@ -102,6 +102,27 @@ final class ApiController
         $this->json($beneficiary === false ? ['error' => 'Account not found.'] : ['beneficiary' => $beneficiary], $beneficiary === false ? 404 : 200);
     }
 
+    public function contactProfile(): void
+    {
+        $accountNumber = $_GET['account_number'] ?? null;
+        if (!is_string($accountNumber) || !preg_match('/^\d{8,32}$/D', $accountNumber)) {
+            $this->json(['error' => 'Enter an account number.'], 422);
+            return;
+        }
+        $statement = Database::connect()->prepare(
+            "SELECT c.display_name, u.email, d.identity_type, d.identity_last_four,
+                    d.address_line1, d.address_line2, d.city, d.postal_code
+             FROM accounts a
+             JOIN customers c ON c.id = a.customer_id
+             LEFT JOIN users u ON u.customer_id = c.id AND u.role = 'customer'
+             LEFT JOIN customer_registration_details d ON d.customer_id = c.id
+             WHERE a.account_number = ? ORDER BY u.id LIMIT 1"
+        );
+        $statement->execute([$accountNumber]);
+        $profile = $statement->fetch();
+        $this->json($profile === false ? ['error' => 'Account not found.'] : ['contact' => $profile], $profile === false ? 404 : 200);
+    }
+
     public function quickTransfer(): void
     {
         $user = $this->customer();

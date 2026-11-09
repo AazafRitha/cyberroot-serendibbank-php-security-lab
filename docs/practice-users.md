@@ -29,9 +29,11 @@ The repository documents the testing purpose. Distribute credentials only to aut
 
 ## View the full live user directory
 
-The [practice user directory workbook](practice-user-directory.xlsx) lists the 20 accounts defined by the seed script, arranged by role. It contains no passwords and is a fixture reference, not a live database export. The Ubuntu VM may also contain users created through registration or management.
+The [practice user directory workbook](practice-user-directory.xlsx) lists the 20 accounts defined by the seed script, arranged by role. It includes their fictional seed profile details and initial account settings. It contains no passwords and is a fixture reference, not a live database export. The Ubuntu VM may also contain users created through registration or management.
 
-To export **all current VM users** privately, including their role, status and account numbers, run this on Ubuntu. The CSV has no passwords, password hashes, identity documents or OTPs, but it still contains names and email addresses, so keep it outside Git and share it only with operators.
+For an operator's private workbook, combine the live directory export with the original credential CSV from the same machine. The seed creates random passwords separately on each server, and existing password hashes cannot be reversed. Keep any workbook containing passwords in an ignored `private/` folder, outside shared reports and repository commits. The workbook on one machine does not contain the passwords generated on another machine.
+
+To export **all current VM users** privately, including their role, status, account numbers, address, identity type and document's last four characters, run this on Ubuntu. The CSV has no passwords, password hashes, full identity numbers or OTPs, but it contains personal details, so keep it outside Git and share it only with operators.
 
 ```bash
 cd ~/cyberroot-serendibbank-php-security-lab

@@ -16,3 +16,4 @@ var/identity/
 public/uploads/
 practice-credentials*.csv
 user-directory-live*.csv
+private/

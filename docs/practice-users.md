@@ -1,46 +1,60 @@
-# Prepare fictional practice accounts
+# Practice accounts and private directory
 
-The operator can add 12 customer profiles with two accounts and sample transactions each, five staff users, two administrators, and one super administrator. The script leaves existing users untouched. Every newly created login receives a different random password. All names, addresses, identity references, and account numbers are fictional. The email addresses use the reserved `.test` domain.
+The local operator workbook at `private/practice-user-directory.xlsx` contains the fictional accounts in the Windows laptop database, grouped by role. It includes the practice passwords and the available customer profile and account details. The `private/` folder is ignored by Git. This workbook is a laptop snapshot; it is not generated automatically on the Ubuntu VM.
 
-Run this **on the Ubuntu VM**, after the web and database containers are up. The credential CSV is written in your home directory, outside the Git checkout. Keep it private and do not send the complete file to learners.
+The accounts use operator-chosen, simple passwords for password-guessing and password-reuse exercises. The passwords are stored in each server's private `.env` file, not in Git. The five-failure sign-in cooldown remains in place, and its `X-Forwarded-For` behavior is covered in the [security testing guide](security-testing-guide.md). Email verification is a separate step.
+
+## Set up the Windows laptop
+
+Add these four settings to the ignored `.env` file in the project folder. Enter your chosen practice passwords privately; use the same values on the VM if you want the workbook passwords to work there.
+
+```dotenv
+PRACTICE_PASSWORD_CUSTOMER=
+PRACTICE_PASSWORD_STAFF=
+PRACTICE_PASSWORD_ADMIN=
+PRACTICE_PASSWORD_SUPER_ADMIN=
+```
+
+Then run in PowerShell:
+
+```powershell
+docker compose up -d --build
+docker compose exec -T web php scripts/seed-practice-users.php > $null
+docker compose exec -T web php scripts/sync-practice-passwords.php
+```
+
+The seed command creates up to 12 fictional customers, five staff users, two administrators, and one super administrator with random initial passwords. The synchronization command applies the private role passwords only to those 20 named practice accounts and four named original sample accounts if they exist. It leaves other registered users alone. Changing a password invalidates that user's existing sessions. Run the synchronization command after restoring an old database or resetting a practice password.
+
+## Apply the same passwords on the Ubuntu VM
+
+After pulling the GitHub update, add the four `PRACTICE_PASSWORD_*` entries to the VM's ignored `.env` file with the same values used on the laptop. Then run:
 
 ```bash
 cd ~/cyberroot-serendibbank-php-security-lab
 git pull --ff-only
 sudo docker compose -f compose.vm.yaml up -d --build
-umask 077
-credentials_file=$(mktemp --suffix=.csv "$HOME/practice-credentials.XXXXXX")
-sudo docker compose -f compose.vm.yaml exec -T web php scripts/seed-practice-users.php > "$credentials_file"
-echo "Credentials saved to: $credentials_file"
-sudo docker compose -f compose.vm.yaml exec -T db sh -c 'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql -uroot "$MYSQL_DATABASE" -N -e "SELECT role, COUNT(*) FROM users GROUP BY role"'
+sudo docker compose -f compose.vm.yaml exec -T web php scripts/seed-practice-users.php > /dev/null
+sudo docker compose -f compose.vm.yaml exec -T web php scripts/sync-practice-passwords.php
+sudo docker compose -f compose.vm.yaml ps
 ```
 
-The first run creates up to 20 users. An existing email is skipped; rerunning the command does not reset its password or duplicate its customer. **Keep the first credentials file**: passwords for skipped users cannot be recovered. The CSV contains each new user's role, email, one-time password, customer ID, and account numbers. To inspect it privately, use `head -n 5 "$credentials_file"`. Do not commit it or paste it into a public report.
+The four original sample accounts in the laptop workbook might not exist on the VM; the command reports absent accounts. Account numbers, balances, and timestamps are generated or updated separately on each server. The named practice accounts use the same passwords after synchronization.
 
-These `.test` mailboxes cannot receive sign-in codes. With `MAIL_TRANSPORT=outbox`, the operator can retrieve a code for a selected practice account:
+The `.test` mailboxes cannot receive sign-in codes. With `MAIL_TRANSPORT=outbox`, the operator can retrieve a code for a selected practice account:
 
 ```bash
 sudo docker compose -f compose.vm.yaml exec web php scripts/read-otp.php 'practice.customer01@example.test'
 ```
 
-For independent remote sign-in, configure SMTP and create users with email addresses they control. See [email and management setup](email-and-management.md). Keep the management workspace on its own hostname; the temporary customer-site Quick Tunnel does not publish it.
+For independent remote sign-in, configure SMTP and create accounts with email addresses each participant controls. See [email and management setup](email-and-management.md). The temporary customer-site Quick Tunnel does not publish the management workspace on its separate hostname.
 
-The repository documents the testing purpose. Distribute credentials only to authorized participants, use separate accounts for each participant, and restore the VM from a snapshot when resetting the exercise.
+## Review a live VM directory
 
-## View the full live user directory
-
-The [practice user directory workbook](practice-user-directory.xlsx) lists the 20 accounts defined by the seed script, arranged by role. It includes their fictional seed profile details and initial account settings. It contains no passwords and is a fixture reference, not a live database export. The Ubuntu VM may also contain users created through registration or management.
-
-For an operator's private workbook, combine the live directory export with the original credential CSV from the same machine. The seed creates random passwords separately on each server, and existing password hashes cannot be reversed. Keep any workbook containing passwords in an ignored `private/` folder, outside shared reports and repository commits. The workbook on one machine does not contain the passwords generated on another machine.
-
-To export **all current VM users** privately, including their role, status, account numbers, address, identity type and document's last four characters, run this on Ubuntu. The CSV has no passwords, password hashes, full identity numbers or OTPs, but it contains personal details, so keep it outside Git and share it only with operators.
+The laptop workbook does not refresh when users register. To export the current VM users privately, run:
 
 ```bash
 cd ~/cyberroot-serendibbank-php-security-lab
-umask 077
-directory_file=$(mktemp --suffix=.csv "$HOME/user-directory-live.XXXXXX")
-sudo docker compose -f compose.vm.yaml exec -T web php scripts/export-user-directory.php > "$directory_file"
-echo "Private live directory: $directory_file"
+sudo docker compose -f compose.vm.yaml exec -T web php scripts/export-user-directory.php > "$HOME/user-directory-live.csv"
 ```
 
-Open that CSV in Excel and filter the `role` column, or make a private copy of the workbook for the VM's current records. The repository workbook does not update automatically when users register.
+The CSV includes names, emails, account details, address fields, and the last four characters of identity documents where available. It does not include passwords, full identity numbers, password hashes, or OTPs.

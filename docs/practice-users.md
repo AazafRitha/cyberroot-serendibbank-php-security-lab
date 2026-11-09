@@ -26,3 +26,19 @@ sudo docker compose -f compose.vm.yaml exec web php scripts/read-otp.php 'practi
 For independent remote sign-in, configure SMTP and create users with email addresses they control. See [email and management setup](email-and-management.md). Keep the management workspace on its own hostname; the temporary customer-site Quick Tunnel does not publish it.
 
 The repository documents the testing purpose. Distribute credentials only to authorized participants, use separate accounts for each participant, and restore the VM from a snapshot when resetting the exercise.
+
+## View the full live user directory
+
+The [practice user directory workbook](practice-user-directory.xlsx) lists the 20 accounts defined by the seed script, arranged by role. It contains no passwords and is a fixture reference, not a live database export. The Ubuntu VM may also contain users created through registration or management.
+
+To export **all current VM users** privately, including their role, status and account numbers, run this on Ubuntu. The CSV has no passwords, password hashes, identity documents or OTPs, but it still contains names and email addresses, so keep it outside Git and share it only with operators.
+
+```bash
+cd ~/cyberroot-serendibbank-php-security-lab
+umask 077
+directory_file=$(mktemp --suffix=.csv "$HOME/user-directory-live.XXXXXX")
+sudo docker compose -f compose.vm.yaml exec -T web php scripts/export-user-directory.php > "$directory_file"
+echo "Private live directory: $directory_file"
+```
+
+Open that CSV in Excel and filter the `role` column, or make a private copy of the workbook for the VM's current records. The repository workbook does not update automatically when users register.

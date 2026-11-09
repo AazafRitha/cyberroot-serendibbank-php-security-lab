@@ -15,3 +15,4 @@ var/otp/
 var/identity/
 public/uploads/
 practice-credentials*.csv
+user-directory-live*.csv

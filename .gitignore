@@ -14,3 +14,4 @@ Thumbs.db
 var/otp/
 var/identity/
 public/uploads/
+practice-credentials*.csv

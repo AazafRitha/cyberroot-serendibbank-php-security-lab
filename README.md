@@ -30,6 +30,8 @@ Save the generated passwords outside Git. Sign in at `/login`. For local develop
 docker compose exec web php scripts/read-otp.php 'customer1@example.test'
 ```
 
+For a larger fictional population with individual, predictable passwords, use the [private CSV import guide](docs/practice-users.md). The import replaces the earlier placeholder emails for mapped users; after importing, use the addresses in the operator CSV for sign-in and OTP lookup.
+
 To reset a password, run `docker compose exec web php scripts/reset-password.php 'customer1@example.test'`. Use `docker compose down` to stop the containers while keeping MySQL data. `docker compose down -v` removes local database data and the identity fingerprint key; it rebuilds the seed data on the next start. Back up the `identity_keys` volume together with the database if you need to restore registrations.
 
 The laptop uses a local verification-code outbox by default. To send sign-in codes to the account's email address, configure the company SMTP server using the [email and management setup guide](docs/email-and-management.md). The management workspace runs on a separate hostname, `manage.localhost` locally. A VM can use a management subdomain through Caddy. Bootstrap the first super administrator with `docker compose exec web php scripts/create-user.php 'superadmin@example.test' 'Operations Director' super_admin`; replace the example address with an inbox you control and save the generated password privately. That account can create staff and admin users in the management workspace.

@@ -11,6 +11,11 @@ if (PHP_SAPI !== 'cli') {
 
 require dirname(__DIR__) . '/app/bootstrap.php';
 
+if (is_file(dirname(__DIR__) . '/private/practice-users.csv')) {
+    fwrite(STDERR, "The private user dataset is present. Run scripts/import-practice-users.php instead.\n");
+    exit(1);
+}
+
 $customers = [
     ['A. Jayasinghe', 'Colombo'],
     ['S. de Silva', 'Kandy'],

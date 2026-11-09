@@ -23,11 +23,8 @@ services:
       SMTP_ENCRYPTION: ${SMTP_ENCRYPTION:-starttls}
       SMTP_USERNAME: ${SMTP_USERNAME:-}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
-      PRACTICE_PASSWORD_CUSTOMER: ${PRACTICE_PASSWORD_CUSTOMER:-}
-      PRACTICE_PASSWORD_STAFF: ${PRACTICE_PASSWORD_STAFF:-}
-      PRACTICE_PASSWORD_ADMIN: ${PRACTICE_PASSWORD_ADMIN:-}
-      PRACTICE_PASSWORD_SUPER_ADMIN: ${PRACTICE_PASSWORD_SUPER_ADMIN:-}
     volumes:
+      - ./private:/var/www/html/private:ro
       - otp_outbox:/var/www/html/var/otp
       - identity_keys:/var/www/html/var/identity
       - support_uploads:/var/www/html/public/uploads

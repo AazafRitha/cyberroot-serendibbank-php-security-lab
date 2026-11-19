@@ -8,6 +8,8 @@ This repository is for authorized security learning. See the [security testing g
 
 Before inviting testers, complete and approve the [assessment scope and rules of engagement](docs/assessment-scope.md) ([Word copy](docs/assessment-scope.docx)). The site has a public-facing security research policy at `/security-research`; it requires each tester to receive an invitation with the exact temporary URL and private reporting channel.
 
+Use the [VAPT reporting template and workflow](docs/reporting/README.md) to document approved tests, evidence and findings. Keep working reports and raw captures in `reports/private/`, which Git ignores.
+
 ## Run locally
 
 Install Docker Desktop and follow the [Windows setup guide](docs/docker-on-windows.md). For the short routine to use each day, see [Start and stop the site](docs/docker-on-windows.md#4-every-day-start-work-and-stop). On the first run only, open this repository in PowerShell and run:

@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#3b1725">
     <title><?= $escape($data['title'] ?? 'SerendibBank') ?></title>
     <script>try { document.documentElement.dataset.theme = localStorage.getItem('serendib-theme') === 'dark' ? 'dark' : 'light'; } catch { document.documentElement.dataset.theme = 'light'; }</script>
-    <link rel="stylesheet" href="/assets/style.css?v=7">
+    <link rel="stylesheet" href="/assets/style.css?v=8">
     <link rel="stylesheet" href="/assets/portal.css?v=2">
     <link rel="stylesheet" href="/assets/chat.css?v=3">
     <link rel="stylesheet" href="/assets/theme.css?v=3">
@@ -73,7 +73,7 @@
         <div class="container footer-top">
             <div class="footer-intro"><a class="brand brand-light" href="/"><img class="brand-mark" src="/assets/logo-mark.svg?v=2" alt="" width="43" height="43"><span class="brand-name"><strong>Serendib<span>Bank</span></strong><small>Banking across Sri Lanka</small></span></a><p>Accounts, cards and online services for your everyday banking.</p></div>
             <div><h2>Explore</h2><a href="/personal">Personal banking</a><a href="/cards">Cards</a><a href="/offers">Card offers</a><a href="/digital">Digital banking</a></div>
-            <div><h2>Useful links</h2><a href="/locations">Branches &amp; ATMs</a><a href="/documents">Product information</a><a href="/support">Help &amp; support</a><a href="/login">Online banking</a></div>
+            <div><h2>Useful links</h2><a href="/locations">Branches &amp; ATMs</a><a href="/documents">Product information</a><a href="/support">Help &amp; support</a><a href="/security-research">Security research policy</a><a href="/login">Online banking</a></div>
             <div><h2>Need help?</h2><p>Find answers to common questions or visit a branch near you.</p><a class="footer-help" href="/support">Visit help centre <span aria-hidden="true">↗</span></a></div>
         </div>
         <div class="container footer-bottom"><span>&copy; <?= date('Y') ?> SerendibBank. All rights reserved.</span><span>Accounts · Cards · Online banking</span></div>

@@ -551,3 +551,21 @@ tr:last-child td{border-bottom:0}
 .document-after p{color:var(--muted);margin:0}
 @media(max-width:900px){.document-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:650px){.cards-hero-stack{display:none}.card-visual{min-height:235px}.card-range .detail-card{padding:0 24px 30px}.card-visual{margin:0 -24px 25px}.application-card-options{gap:8px}.application-card-options figure{padding:8px}.application-card-options figcaption{font-size:.64rem}.document-grid{grid-template-columns:1fr}.document-card{min-height:265px}.document-paper{padding:40px 25px}.document-after{display:block}.document-after .text-link{margin-top:12px}}
+
+/* Security research policy */
+.security-hero{background:radial-gradient(circle at 78% 36%,#7b4051 0,#4a2030 42%,#32131f 100%)}
+.security-hero-mark{display:grid;place-items:center;width:240px;height:240px;justify-self:center;border:1px solid #e4c38a88;border-radius:50%;background:#ffffff0a;box-shadow:0 0 0 23px #ffffff08,0 0 0 46px #ffffff04}
+.security-hero-mark img{width:120px;height:120px;filter:drop-shadow(0 13px 18px #13070c66)}
+.security-policy{padding-top:78px;padding-bottom:90px}
+.security-policy-intro{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:end;margin-bottom:42px}
+.security-policy-intro p{color:var(--muted);line-height:1.75;margin:0}
+.security-policy-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.security-policy-grid article{padding:32px 36px 36px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.security-policy-number{font:normal 1rem Georgia,serif;color:var(--gold)}
+.security-policy-grid h3{font:normal 1.6rem Georgia,serif;color:var(--burgundy);margin:13px 0 9px}
+.security-policy-grid p{color:var(--muted);font-size:.88rem;line-height:1.75;margin:0}
+.security-policy-close{max-width:760px;margin:50px auto 0;text-align:center}
+.security-policy-close h2{font:normal 1.6rem Georgia,serif;color:var(--burgundy)}
+.security-policy-close p{color:var(--muted);line-height:1.75}
+@media(max-width:750px){.security-policy-intro{grid-template-columns:1fr;gap:15px}.security-policy-grid{grid-template-columns:1fr}.security-policy{padding-top:55px;padding-bottom:65px}}
+:root[data-theme="dark"] .security-policy-grid h3,:root[data-theme="dark"] .security-policy-close h2{color:var(--ink)}

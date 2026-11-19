@@ -6,6 +6,8 @@ SerendibBank is a PHP and MySQL website with public product pages, product infor
 
 This repository is for authorized security learning. See the [security testing guide](docs/security-testing-guide.md) for the finding inventory and validation steps. The site itself presents normal banking journeys.
 
+Before inviting testers, complete and approve the [assessment scope and rules of engagement](docs/assessment-scope.md) ([Word copy](docs/assessment-scope.docx)). The site has a public-facing security research policy at `/security-research`; it requires each tester to receive an invitation with the exact temporary URL and private reporting channel.
+
 ## Run locally
 
 Install Docker Desktop and follow the [Windows setup guide](docs/docker-on-windows.md). For the short routine to use each day, see [Start and stop the site](docs/docker-on-windows.md#4-every-day-start-work-and-stop). On the first run only, open this repository in PowerShell and run:

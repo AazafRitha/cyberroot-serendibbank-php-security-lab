@@ -85,6 +85,7 @@ $router->get('/digital', [$pages, 'digital']);
 $router->get('/digital/continue', [$pages, 'continueToBanking']);
 $router->get('/locations', [$pages, 'locations']);
 $router->get('/support', [$pages, 'support']);
+$router->get('/security-research', [$pages, 'securityResearch']);
 $savings = new SavingsController();
 $router->get('/savings/calculator', [$savings, 'show']);
 $router->post('/savings/calculator', [$savings, 'calculate']);

@@ -74,4 +74,9 @@ final class PagesController
     {
         View::render('support', ['title' => 'Help & Support | SerendibBank']);
     }
+
+    public function securityResearch(): void
+    {
+        View::render('security-research', ['title' => 'Security Research Policy | SerendibBank']);
+    }
 }

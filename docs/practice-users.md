@@ -19,6 +19,7 @@ docker compose exec -T web php scripts/import-practice-users.php
 The first command starts the site. The second checks the CSV without changing the database. The third applies it, reporting added and updated users. Run it again after restoring an older database snapshot. The import changes the named users' passwords and invalidates their previous sessions. It does not change passwords for unrelated registrations.
 
 The older `scripts/seed-practice-users.php` command must not be used alongside this dataset; it would recreate the earlier placeholder emails. It exits with a reminder when the private CSV is present.
+The `scripts/seed-vapt-users.php` command uses this same CSV importer. It no longer creates separate users with random passwords or accepts customer/staff count arguments.
 
 ## Ubuntu VM
 

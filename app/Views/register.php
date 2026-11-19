@@ -1,5 +1,5 @@
 <div class="auth-page">
-    <section class="auth-intro"><div class="auth-intro-inner"><span class="eyebrow eyebrow-light">SerendibBank online</span><h1>Begin<br><em>here.</em></h1><p>Open an everyday account and keep your banking close, wherever life takes you.</p><div class="auth-intro-rule"></div><small>Banking for what matters next.</small></div></section>
+    <section class="auth-intro"><div class="auth-intro-inner"><span class="eyebrow eyebrow-light">SerendibBank online</span><h1>Open an<br><em>account.</em></h1><p>Provide your identity, address and sign-in details to register for an everyday account.</p><div class="auth-intro-rule"></div><small>Accounts · Cards · Online banking</small></div></section>
     <section class="auth-form-wrap" aria-labelledby="register-title"><div class="auth-form-inner"><span class="eyebrow">Join SerendibBank</span><h2 id="register-title">Create your account</h2><p>Enter your details to set up your online banking access.</p>
         <?php if (!empty($data['error'])): ?><div class="form-error" role="alert"><?= $escape($data['error']) ?></div><?php endif; ?>
         <form method="post" action="/register" class="bank-form">

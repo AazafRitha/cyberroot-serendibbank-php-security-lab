@@ -31,10 +31,10 @@ final class PagesController
             $query = substr($query, 0, 80);
         }
         $offers = [
-            ['category' => 'Dining', 'title' => 'Make every meal memorable.', 'description' => 'Dining experiences for evenings out and special occasions.', 'art' => 'dining'],
-            ['category' => 'Travel', 'title' => 'A better way to get away.', 'description' => 'Inspiration for stays, journeys and time well spent.', 'art' => 'travel'],
-            ['category' => 'Shopping', 'title' => 'Enjoy the little extras.', 'description' => 'More value across everyday essentials and favourite finds.', 'art' => 'shopping'],
-            ['category' => 'Wellness', 'title' => 'Time well spent on you.', 'description' => 'Thoughtful ways to make room for wellbeing.', 'art' => 'wellness'],
+            ['category' => 'Dining', 'title' => 'Dining offers', 'description' => 'Cardholder dining promotions and participating venues.', 'art' => 'dining'],
+            ['category' => 'Travel', 'title' => 'Travel offers', 'description' => 'Hotel and travel promotions for eligible cards.', 'art' => 'travel'],
+            ['category' => 'Shopping', 'title' => 'Shopping offers', 'description' => 'Retail promotions and card eligibility details.', 'art' => 'shopping'],
+            ['category' => 'Wellness', 'title' => 'Wellness offers', 'description' => 'Wellness promotions and participating services.', 'art' => 'wellness'],
         ];
         $results = array_values(array_filter($offers, static fn (array $offer): bool =>
             $query === '' || stripos($offer['category'] . ' ' . $offer['title'] . ' ' . $offer['description'], $query) !== false

@@ -1,5 +1,5 @@
 <div class="auth-page">
-    <section class="auth-intro"><div class="auth-intro-inner"><span class="eyebrow eyebrow-light">SerendibBank online</span><h1>One more<br><em>step.</em></h1><p>Keep your banking close and your account protected.</p><div class="auth-intro-rule"></div><small>Banking for what matters next.</small></div></section>
+    <section class="auth-intro"><div class="auth-intro-inner"><span class="eyebrow eyebrow-light">SerendibBank online</span><h1>Verify your<br><em>sign in.</em></h1><p>Enter the six-digit code sent to your registered email address.</p><div class="auth-intro-rule"></div><small>Accounts · Cards · Online banking</small></div></section>
     <section class="auth-form-wrap" aria-labelledby="verify-title"><div class="auth-form-inner"><span class="eyebrow">Online banking</span><h2 id="verify-title">Verify your sign in</h2><p>Enter the six-digit code for <?= $escape($data['maskedEmail']) ?>. The code expires in five minutes.</p>
         <?php if (!empty($data['error'])): ?><div class="form-error" role="alert"><?= $escape($data['error']) ?></div><?php endif; ?>
         <form method="post" action="/verify" class="bank-form">

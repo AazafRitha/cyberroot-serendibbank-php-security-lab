@@ -1,5 +1,5 @@
 <section class="settings-hero">
-    <div class="container settings-hero-inner"><div><span class="eyebrow eyebrow-light">Online banking</span><h1>Your account.<br><em>In your hands.</em></h1><p>Review where you are signed in and end sessions you no longer use.</p></div><img src="/assets/account-settings.webp" alt="Customer managing banking details on a laptop at home"></div>
+    <div class="container settings-hero-inner"><div><span class="eyebrow eyebrow-light">Online banking</span><h1>Your active<br><em>sessions.</em></h1><p>Review where you are signed in and end sessions you no longer use.</p></div><img src="/assets/account-settings.webp" alt="Customer managing banking details on a laptop at home"></div>
 </section>
 <div class="container portal-shell settings-shell">
     <div class="portal-topline"><a href="/settings">← Back to settings</a><span>Sign-in &amp; security</span></div>
